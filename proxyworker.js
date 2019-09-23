@@ -105,6 +105,13 @@ class ProxyWorker {
         return this.templates.size;
     }
 
+    clear() {
+        this.templates.clear;
+        if (this.connected) {
+            this.socket.emit('clear-template');
+        }
+    }
+
     identify(feature) {
         return new Promise((resolve, reject) => {
             if (this.connected) {

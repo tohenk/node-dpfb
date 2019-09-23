@@ -61,6 +61,10 @@ class FingerprintIdentifier {
         return this.templates.size;
     }
 
+    clear() {
+        this.templates.clear();
+    }
+
     convertToBuffer(str) {
         const data = new Uint8Array(str.length);
         for (let i = 0; i < str.length; i++) {

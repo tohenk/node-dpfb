@@ -156,6 +156,9 @@ class FingerprintBridge {
                 });
             }
         });
+        con.on('clear-template', () => {
+            this.getIdentifier().clear();
+        });
     }
 
     fingerOp(op, con) {
