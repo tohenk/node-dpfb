@@ -1,0 +1,244 @@
+﻿// Created by Microsoft (R) C/C++ Compiler Version 14.16.27032.1 (744ded52).
+//
+// C++ source equivalent of Win32 type library C:\\Program Files (x86)\\DigitalPersona\\Bin\\COM-ActiveX\\DPFPEngX.dll
+// compiler-generated file created 08/21/19 at 06:38:54 - DO NOT EDIT!
+
+#pragma once
+#pragma pack(push, 8)
+
+#include <comdef.h>
+
+namespace DPFPEngXLib {
+
+//
+// Forward references and typedefs
+//
+
+struct __declspec(uuid("a9efb3f6-a8c8-4684-841e-4330973057c6"))
+/* LIBID */ __DPFPEngXLib;
+enum DPFPTemplateStatusEnum;
+enum DPFPDataPurposeEnum;
+struct __declspec(uuid("780aaf49-c395-4ad5-8e87-1a5abe59e1ea"))
+/* dual interface */ IDPFPFeatureExtraction;
+enum DPFPCaptureFeedbackEnum;
+struct __declspec(uuid("0c1e3e79-c57f-4dc5-bc3c-69c920ea94f9"))
+/* dual interface */ IDPFPEnrollment;
+struct __declspec(uuid("b05fbe8f-1014-4ddb-8e43-2c86baac7909"))
+/* dual interface */ IDPFPVerificationResult;
+struct __declspec(uuid("7bc9c18b-d192-488d-bab6-d43c963b2b3d"))
+/* dual interface */ IDPFPVerification;
+struct /* coclass */ DPFPFeatureExtraction;
+struct /* coclass */ DPFPEnrollment;
+struct /* coclass */ DPFPVerification;
+struct /* coclass */ DPFPVerificationResult;
+
+//
+// Smart pointer typedef declarations
+//
+
+_COM_SMARTPTR_TYPEDEF(IDPFPFeatureExtraction, __uuidof(IDPFPFeatureExtraction));
+_COM_SMARTPTR_TYPEDEF(IDPFPEnrollment, __uuidof(IDPFPEnrollment));
+_COM_SMARTPTR_TYPEDEF(IDPFPVerificationResult, __uuidof(IDPFPVerificationResult));
+_COM_SMARTPTR_TYPEDEF(IDPFPVerification, __uuidof(IDPFPVerification));
+
+//
+// Type library items
+//
+
+enum DPFPTemplateStatusEnum
+{
+    TemplateStatusUnknown = 0,
+    TemplateStatusInsufficient = 1,
+    TemplateStatusCreationFailed = 2,
+    TemplateStatusTemplateReady = 3
+};
+
+enum DPFPDataPurposeEnum
+{
+    DataPurposeUnknown = 0,
+    DataPurposeVerification = 1,
+    DataPurposeEnrollment = 2
+};
+
+enum DPFPCaptureFeedbackEnum
+{
+    CaptureFeedbackGood = 0,
+    CaptureFeedbackNone = 1,
+    CaptureFeedbackTooLight = 2,
+    CaptureFeedbackTooDark = 3,
+    CaptureFeedbackTooNoisy = 4,
+    CaptureFeedbackLowContrast = 5,
+    CaptureFeedbackNotEnoughFtrs = 6,
+    CaptureFeedbackNoCentralRgn = 7,
+    CaptureFeedbackNoFinger = 8,
+    CaptureFeedbackTooHigh = 9,
+    CaptureFeedbackTooLow = 10,
+    CaptureFeedbackTooLeft = 11,
+    CaptureFeedbackTooRight = 12,
+    CaptureFeedbackTooStrange = 13,
+    CaptureFeedbackTooFast = 14,
+    CaptureFeedbackTooSkewed = 15,
+    CaptureFeedbackTooShort = 16,
+    CaptureFeedbackTooSlow = 17
+};
+
+struct __declspec(uuid("780aaf49-c395-4ad5-8e87-1a5abe59e1ea"))
+IDPFPFeatureExtraction : IDispatch
+{
+    //
+    // Property data
+    //
+
+    __declspec(property(get=GetFeatureSet))
+    IDispatchPtr FeatureSet;
+
+    //
+    // Wrapper methods for error-handling
+    //
+
+    enum DPFPCaptureFeedbackEnum CreateFeatureSet (
+        IDispatch * pSample,
+        enum DPFPDataPurposeEnum Purpose );
+    IDispatchPtr GetFeatureSet ( );
+
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall raw_CreateFeatureSet (
+        /*[in]*/ IDispatch * pSample,
+        /*[in]*/ enum DPFPDataPurposeEnum Purpose,
+        /*[out,retval]*/ enum DPFPCaptureFeedbackEnum * pCaptureFeedback ) = 0;
+      virtual HRESULT __stdcall get_FeatureSet (
+        /*[out,retval]*/ IDispatch * * ppFeatureSet ) = 0;
+};
+
+struct __declspec(uuid("0c1e3e79-c57f-4dc5-bc3c-69c920ea94f9"))
+IDPFPEnrollment : IDispatch
+{
+    //
+    // Property data
+    //
+
+    __declspec(property(get=GetFeaturesNeeded))
+    long FeaturesNeeded;
+    __declspec(property(get=GetTemplateStatus))
+    enum DPFPTemplateStatusEnum TemplateStatus;
+    __declspec(property(get=GetTemplate))
+    IDispatchPtr Template;
+
+    //
+    // Wrapper methods for error-handling
+    //
+
+    long GetFeaturesNeeded ( );
+    enum DPFPTemplateStatusEnum GetTemplateStatus ( );
+    IDispatchPtr GetTemplate ( );
+    HRESULT AddFeatures (
+        IDispatch * pFeatures );
+    HRESULT Clear ( );
+
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_FeaturesNeeded (
+        /*[out,retval]*/ long * pVal ) = 0;
+      virtual HRESULT __stdcall get_TemplateStatus (
+        /*[out,retval]*/ enum DPFPTemplateStatusEnum * pVal ) = 0;
+      virtual HRESULT __stdcall get_Template (
+        /*[out,retval]*/ IDispatch * * pVal ) = 0;
+      virtual HRESULT __stdcall raw_AddFeatures (
+        /*[in]*/ IDispatch * pFeatures ) = 0;
+      virtual HRESULT __stdcall raw_Clear ( ) = 0;
+};
+
+struct __declspec(uuid("b05fbe8f-1014-4ddb-8e43-2c86baac7909"))
+IDPFPVerificationResult : IDispatch
+{
+    //
+    // Property data
+    //
+
+    __declspec(property(get=GetVerified))
+    VARIANT_BOOL Verified;
+    __declspec(property(get=GetFARAchieved))
+    long FARAchieved;
+
+    //
+    // Wrapper methods for error-handling
+    //
+
+    VARIANT_BOOL GetVerified ( );
+    long GetFARAchieved ( );
+
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_Verified (
+        /*[out,retval]*/ VARIANT_BOOL * pVal ) = 0;
+      virtual HRESULT __stdcall get_FARAchieved (
+        /*[out,retval]*/ long * pVal ) = 0;
+};
+
+struct __declspec(uuid("7bc9c18b-d192-488d-bab6-d43c963b2b3d"))
+IDPFPVerification : IDispatch
+{
+    //
+    // Property data
+    //
+
+    __declspec(property(get=GetFARRequested,put=PutFARRequested))
+    long FARRequested;
+
+    //
+    // Wrapper methods for error-handling
+    //
+
+    long GetFARRequested ( );
+    void PutFARRequested (
+        long pVal );
+    IDispatchPtr Verify (
+        IDispatch * pFeatureSet,
+        IDispatch * pTemplate );
+
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_FARRequested (
+        /*[out,retval]*/ long * pVal ) = 0;
+      virtual HRESULT __stdcall put_FARRequested (
+        /*[in]*/ long pVal ) = 0;
+      virtual HRESULT __stdcall raw_Verify (
+        /*[in]*/ IDispatch * pFeatureSet,
+        /*[in]*/ IDispatch * pTemplate,
+        /*[out,retval]*/ IDispatch * * ppVerificationResult ) = 0;
+};
+
+struct __declspec(uuid("c64055ad-8960-4429-bdb4-2e102f47bd9a"))
+DPFPFeatureExtraction;
+    // [ default ] interface IDPFPFeatureExtraction
+
+struct __declspec(uuid("1e1020ef-4a4f-430d-a351-427821b177b2"))
+DPFPEnrollment;
+    // [ default ] interface IDPFPEnrollment
+
+struct __declspec(uuid("8b7a9d29-5c11-464f-a058-bfa8024805ce"))
+DPFPVerification;
+    // [ default ] interface IDPFPVerification
+
+struct __declspec(uuid("b2d559ae-f070-4c2a-9d99-6e68da0b1e8e"))
+DPFPVerificationResult;
+    // [ default ] interface IDPFPVerificationResult
+
+//
+// Wrapper method implementations
+//
+
+#include "DPFPEngX.tli"
+
+} // namespace DPFPEngXLib
+
+#pragma pack(pop)

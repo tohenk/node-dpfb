@@ -1,0 +1,24 @@
+﻿// Created by Microsoft (R) C/C++ Compiler Version 14.16.27032.1 (608c255e).
+//
+// Wrapper implementations for Win32 type library C:\\Program Files (x86)\\DigitalPersona\\Bin\\COM-ActiveX\\DPFPShrX.dll
+// compiler-generated file created 08/21/19 at 06:38:54 - DO NOT EDIT!
+
+#pragma once
+
+//
+// interface IDPFPData wrapper method implementations
+//
+
+inline _variant_t IDPFPData::Serialize ( ) {
+    VARIANT _result;
+    VariantInit(&_result);
+    HRESULT _hr = raw_Serialize(&_result);
+    if (FAILED(_hr)) _com_issue_errorex(_hr, this, __uuidof(this));
+    return _variant_t(_result, false);
+}
+
+inline HRESULT IDPFPData::Deserialize ( const _variant_t & RawData ) {
+    HRESULT _hr = raw_Deserialize(RawData);
+    if (FAILED(_hr)) _com_issue_errorex(_hr, this, __uuidof(this));
+    return _hr;
+}

@@ -1,0 +1,102 @@
+﻿// Created by Microsoft (R) C/C++ Compiler Version 14.16.27032.1 (744ded52).
+//
+// Wrapper implementations for Win32 type library C:\\Program Files (x86)\\DigitalPersona\\Bin\\COM-ActiveX\\DPFPEngX.dll
+// compiler-generated file created 08/21/19 at 06:38:54 - DO NOT EDIT!
+
+#pragma once
+
+//
+// interface IDPFPFeatureExtraction wrapper method implementations
+//
+
+inline enum DPFPCaptureFeedbackEnum IDPFPFeatureExtraction::CreateFeatureSet ( IDispatch * pSample, enum DPFPDataPurposeEnum Purpose ) {
+    enum DPFPCaptureFeedbackEnum _result;
+    HRESULT _hr = raw_CreateFeatureSet(pSample, Purpose, &_result);
+    if (FAILED(_hr)) _com_issue_errorex(_hr, this, __uuidof(this));
+    return _result;
+}
+
+inline IDispatchPtr IDPFPFeatureExtraction::GetFeatureSet ( ) {
+    IDispatch * _result = 0;
+    HRESULT _hr = get_FeatureSet(&_result);
+    if (FAILED(_hr)) _com_issue_errorex(_hr, this, __uuidof(this));
+    return IDispatchPtr(_result, false);
+}
+
+//
+// interface IDPFPEnrollment wrapper method implementations
+//
+
+inline long IDPFPEnrollment::GetFeaturesNeeded ( ) {
+    long _result = 0;
+    HRESULT _hr = get_FeaturesNeeded(&_result);
+    if (FAILED(_hr)) _com_issue_errorex(_hr, this, __uuidof(this));
+    return _result;
+}
+
+inline enum DPFPTemplateStatusEnum IDPFPEnrollment::GetTemplateStatus ( ) {
+    enum DPFPTemplateStatusEnum _result;
+    HRESULT _hr = get_TemplateStatus(&_result);
+    if (FAILED(_hr)) _com_issue_errorex(_hr, this, __uuidof(this));
+    return _result;
+}
+
+inline IDispatchPtr IDPFPEnrollment::GetTemplate ( ) {
+    IDispatch * _result = 0;
+    HRESULT _hr = get_Template(&_result);
+    if (FAILED(_hr)) _com_issue_errorex(_hr, this, __uuidof(this));
+    return IDispatchPtr(_result, false);
+}
+
+inline HRESULT IDPFPEnrollment::AddFeatures ( IDispatch * pFeatures ) {
+    HRESULT _hr = raw_AddFeatures(pFeatures);
+    if (FAILED(_hr)) _com_issue_errorex(_hr, this, __uuidof(this));
+    return _hr;
+}
+
+inline HRESULT IDPFPEnrollment::Clear ( ) {
+    HRESULT _hr = raw_Clear();
+    if (FAILED(_hr)) _com_issue_errorex(_hr, this, __uuidof(this));
+    return _hr;
+}
+
+//
+// interface IDPFPVerificationResult wrapper method implementations
+//
+
+inline VARIANT_BOOL IDPFPVerificationResult::GetVerified ( ) {
+    VARIANT_BOOL _result = 0;
+    HRESULT _hr = get_Verified(&_result);
+    if (FAILED(_hr)) _com_issue_errorex(_hr, this, __uuidof(this));
+    return _result;
+}
+
+inline long IDPFPVerificationResult::GetFARAchieved ( ) {
+    long _result = 0;
+    HRESULT _hr = get_FARAchieved(&_result);
+    if (FAILED(_hr)) _com_issue_errorex(_hr, this, __uuidof(this));
+    return _result;
+}
+
+//
+// interface IDPFPVerification wrapper method implementations
+//
+
+inline long IDPFPVerification::GetFARRequested ( ) {
+    long _result = 0;
+    HRESULT _hr = get_FARRequested(&_result);
+    if (FAILED(_hr)) _com_issue_errorex(_hr, this, __uuidof(this));
+    return _result;
+}
+
+inline void IDPFPVerification::PutFARRequested ( long pVal ) {
+    HRESULT _hr = put_FARRequested(pVal);
+    if (FAILED(_hr)) _com_issue_errorex(_hr, this, __uuidof(this));
+}
+
+inline IDispatchPtr IDPFPVerification::Verify ( IDispatch * pFeatureSet, IDispatch * pTemplate ) {
+    IDispatch * _result = 0;
+    HRESULT _hr = raw_Verify(pFeatureSet, pTemplate, &_result);
+    if (FAILED(_hr)) _com_issue_errorex(_hr, this, __uuidof(this));
+    return IDispatchPtr(_result, false);
+}

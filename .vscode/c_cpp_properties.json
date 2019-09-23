@@ -1,0 +1,31 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${USERPROFILE}\\.node-gyp\\12.10.0\\include\\node",
+                "${USERPROFILE}\\.node-gyp\\12.10.0\\src",
+                "${USERPROFILE}\\.node-gyp\\12.10.0\\deps\\openssl\\config",
+                "${USERPROFILE}\\.node-gyp\\12.10.0\\deps\\openssl\\openssl\\include",
+                "${USERPROFILE}\\.node-gyp\\12.10.0\\deps\\uv\\include",
+                "${USERPROFILE}\\.node-gyp\\12.10.0\\deps\\zlib",
+                "${USERPROFILE}\\.node-gyp\\12.10.0\\deps\\v8\\include",
+                "${workspaceFolder}\\node_modules\\nan",
+                "${workspaceFolder}\\node_modules\\node-addon-api",
+                "${ProgramFiles}\\DigitalPersona\\One Touch SDK\\C-C++\\Include",
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "windowsSdkVersion": "10.0.17763.0",
+            "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2017/Professional/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/cl.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "msvc-x64"
+        }
+    ],
+    "version": 4
+}

@@ -1,0 +1,323 @@
+﻿// Created by Microsoft (R) C/C++ Compiler Version 14.16.27032.1 (9458f152).
+//
+// C++ source equivalent of Win32 type library C:\\Program Files (x86)\\DigitalPersona\\Bin\\COM-ActiveX\\DPFPDevX.dll
+// compiler-generated file created 08/19/19 at 07:00:47 - DO NOT EDIT!
+
+#pragma once
+#pragma pack(push, 8)
+
+#include <comdef.h>
+
+namespace DPFPDevXLib {
+
+//
+// Forward references and typedefs
+//
+
+struct __declspec(uuid("bcdef2d4-f788-4a38-b0c2-c97b3f9fb791"))
+/* LIBID */ __DPFPDevXLib;
+enum DPFPReaderSerialNumberTypeEnum;
+enum DPFPReaderImpressionTypeEnum;
+enum DPFPReaderTechnologyEnum;
+enum DPFPCapturePriorityEnum;
+struct __declspec(uuid("a582741b-8913-4e8c-8621-6d907ec8363d"))
+/* dual interface */ IDPFPReaderDescription;
+struct __declspec(uuid("176f9311-1132-433c-88d4-2060c7a25946"))
+/* dual interface */ IDPFPReadersCollection;
+struct __declspec(uuid("4984b820-7ba4-41d2-901b-3e98b91befd6"))
+/* dual interface */ IDPFPCapture;
+struct __declspec(uuid("34ce265e-92e3-4884-922b-d4c7e9ad43ba"))
+/* dual interface */ IDPFPSampleConversion;
+struct __declspec(uuid("c1673a85-2c18-49ca-9644-f08e71d94edb"))
+/* dispinterface */ _IDPFPCaptureEvents;
+enum DPFPCaptureFeedbackEnum;
+struct /* coclass */ DPFPReaderDescription;
+struct /* coclass */ DPFPReadersCollection;
+struct /* coclass */ DPFPCapture;
+struct /* coclass */ DPFPSampleConversion;
+
+//
+// Smart pointer typedef declarations
+//
+
+_COM_SMARTPTR_TYPEDEF(IDPFPReaderDescription, __uuidof(IDPFPReaderDescription));
+_COM_SMARTPTR_TYPEDEF(IDPFPReadersCollection, __uuidof(IDPFPReadersCollection));
+_COM_SMARTPTR_TYPEDEF(IDPFPCapture, __uuidof(IDPFPCapture));
+_COM_SMARTPTR_TYPEDEF(IDPFPSampleConversion, __uuidof(IDPFPSampleConversion));
+_COM_SMARTPTR_TYPEDEF(_IDPFPCaptureEvents, __uuidof(_IDPFPCaptureEvents));
+
+//
+// Type library items
+//
+
+enum DPFPReaderSerialNumberTypeEnum
+{
+    ReaderSerialNumberTypePersistent = 0,
+    ReaderSerialNumberTypeVolatile = 1
+};
+
+enum DPFPReaderImpressionTypeEnum
+{
+    ReaderImpressionTypeUnknown = 0,
+    ReaderImpressionTypeSwipe = 1,
+    ReaderImpressionTypeArea = 2
+};
+
+enum DPFPReaderTechnologyEnum
+{
+    ReaderTechnologyUnknown = 0,
+    ReaderTechnologyOptical = 1,
+    ReaderTechnologyCapacitive = 2,
+    ReaderTechnologyThermal = 3,
+    ReaderTechnologyPressure = 4
+};
+
+enum DPFPCapturePriorityEnum
+{
+    CapturePriorityLow = 0,
+    CapturePriorityNormal = 1,
+    CapturePriorityHigh = 2
+};
+
+struct __declspec(uuid("a582741b-8913-4e8c-8621-6d907ec8363d"))
+IDPFPReaderDescription : IDispatch
+{
+    //
+    // Property data
+    //
+
+    __declspec(property(get=GetSerialNumber))
+    _bstr_t SerialNumber;
+    __declspec(property(get=GetSerialNumberType))
+    enum DPFPReaderSerialNumberTypeEnum SerialNumberType;
+    __declspec(property(get=GetImpressionType))
+    enum DPFPReaderImpressionTypeEnum ImpressionType;
+    __declspec(property(get=GetTechnology))
+    enum DPFPReaderTechnologyEnum Technology;
+    __declspec(property(get=GetLanguageID))
+    long LanguageID;
+    __declspec(property(get=GetVendor))
+    _bstr_t Vendor;
+    __declspec(property(get=GetProductName))
+    _bstr_t ProductName;
+    __declspec(property(get=GetHardwareRevision))
+    _bstr_t HardwareRevision;
+    __declspec(property(get=GetFirmwareRevision))
+    _bstr_t FirmwareRevision;
+
+    //
+    // Wrapper methods for error-handling
+    //
+
+    _bstr_t GetSerialNumber ( );
+    enum DPFPReaderSerialNumberTypeEnum GetSerialNumberType ( );
+    enum DPFPReaderImpressionTypeEnum GetImpressionType ( );
+    enum DPFPReaderTechnologyEnum GetTechnology ( );
+    long GetLanguageID ( );
+    _bstr_t GetVendor ( );
+    _bstr_t GetProductName ( );
+    _bstr_t GetHardwareRevision ( );
+    _bstr_t GetFirmwareRevision ( );
+
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_SerialNumber (
+        /*[out,retval]*/ BSTR * pVal ) = 0;
+      virtual HRESULT __stdcall get_SerialNumberType (
+        /*[out,retval]*/ enum DPFPReaderSerialNumberTypeEnum * pVal ) = 0;
+      virtual HRESULT __stdcall get_ImpressionType (
+        /*[out,retval]*/ enum DPFPReaderImpressionTypeEnum * pVal ) = 0;
+      virtual HRESULT __stdcall get_Technology (
+        /*[out,retval]*/ enum DPFPReaderTechnologyEnum * pVal ) = 0;
+      virtual HRESULT __stdcall get_LanguageID (
+        /*[out,retval]*/ long * pVal ) = 0;
+      virtual HRESULT __stdcall get_Vendor (
+        /*[out,retval]*/ BSTR * pVal ) = 0;
+      virtual HRESULT __stdcall get_ProductName (
+        /*[out,retval]*/ BSTR * pVal ) = 0;
+      virtual HRESULT __stdcall get_HardwareRevision (
+        /*[out,retval]*/ BSTR * pVal ) = 0;
+      virtual HRESULT __stdcall get_FirmwareRevision (
+        /*[out,retval]*/ BSTR * pVal ) = 0;
+};
+
+struct __declspec(uuid("176f9311-1132-433c-88d4-2060c7a25946"))
+IDPFPReadersCollection : IDispatch
+{
+    //
+    // Property data
+    //
+
+    __declspec(property(get=GetItem))
+    IDispatchPtr Item[];
+    __declspec(property(get=GetCount))
+    long Count;
+    __declspec(property(get=Get_NewEnum))
+    IUnknownPtr _NewEnum;
+
+    //
+    // Wrapper methods for error-handling
+    //
+
+    long GetCount ( );
+    IDispatchPtr Reader (
+        _bstr_t ReaderSerialNumber );
+    IDispatchPtr GetItem (
+        long lDevice );
+    IUnknownPtr Get_NewEnum ( );
+
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall get_Count (
+        /*[out,retval]*/ long * plCount ) = 0;
+      virtual HRESULT __stdcall raw_Reader (
+        /*[in]*/ BSTR ReaderSerialNumber,
+        /*[out,retval]*/ IDispatch * * ppReader ) = 0;
+      virtual HRESULT __stdcall get_Item (
+        /*[in]*/ long lDevice,
+        /*[out,retval]*/ IDispatch * * ppReader ) = 0;
+      virtual HRESULT __stdcall get__NewEnum (
+        /*[out,retval]*/ IUnknown * * ppReaderEnum ) = 0;
+};
+
+struct __declspec(uuid("4984b820-7ba4-41d2-901b-3e98b91befd6"))
+IDPFPCapture : IDispatch
+{
+    //
+    // Property data
+    //
+
+    __declspec(property(get=GetReaderSerialNumber,put=PutReaderSerialNumber))
+    _bstr_t ReaderSerialNumber;
+    __declspec(property(get=GetPriority,put=PutPriority))
+    enum DPFPCapturePriorityEnum Priority;
+
+    //
+    // Wrapper methods for error-handling
+    //
+
+    HRESULT StartCapture ( );
+    HRESULT StopCapture ( );
+    _bstr_t GetReaderSerialNumber ( );
+    void PutReaderSerialNumber (
+        _bstr_t pVal );
+    enum DPFPCapturePriorityEnum GetPriority ( );
+    void PutPriority (
+        enum DPFPCapturePriorityEnum pVal );
+
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall raw_StartCapture ( ) = 0;
+      virtual HRESULT __stdcall raw_StopCapture ( ) = 0;
+      virtual HRESULT __stdcall get_ReaderSerialNumber (
+        /*[out,retval]*/ BSTR * pVal ) = 0;
+      virtual HRESULT __stdcall put_ReaderSerialNumber (
+        /*[in]*/ BSTR pVal ) = 0;
+      virtual HRESULT __stdcall get_Priority (
+        /*[out,retval]*/ enum DPFPCapturePriorityEnum * pVal ) = 0;
+      virtual HRESULT __stdcall put_Priority (
+        /*[in]*/ enum DPFPCapturePriorityEnum pVal ) = 0;
+};
+
+struct __declspec(uuid("34ce265e-92e3-4884-922b-d4c7e9ad43ba"))
+IDPFPSampleConversion : IDispatch
+{
+    //
+    // Wrapper methods for error-handling
+    //
+
+    IDispatchPtr ConvertToPicture (
+        IDispatch * pSample );
+    _variant_t ConvertToANSI381 (
+        IDispatch * pSample );
+
+    //
+    // Raw methods provided by interface
+    //
+
+      virtual HRESULT __stdcall raw_ConvertToPicture (
+        /*[in]*/ IDispatch * pSample,
+        /*[out,retval]*/ IDispatch * * ppPicture ) = 0;
+      virtual HRESULT __stdcall raw_ConvertToANSI381 (
+        /*[in]*/ IDispatch * pSample,
+        /*[out,retval]*/ VARIANT * pAnsi ) = 0;
+};
+
+struct __declspec(uuid("c1673a85-2c18-49ca-9644-f08e71d94edb"))
+_IDPFPCaptureEvents : IDispatch
+{
+    //
+    // Wrapper methods for error-handling
+    //
+
+    // Methods:
+    HRESULT OnComplete (
+        _bstr_t ReaderSerNum,
+        IDispatch * pSample );
+    HRESULT OnReaderDisconnect (
+        _bstr_t ReaderSerNum );
+    HRESULT OnReaderConnect (
+        _bstr_t ReaderSerNum );
+    HRESULT OnFingerTouch (
+        _bstr_t ReaderSerNum );
+    HRESULT OnFingerGone (
+        _bstr_t ReaderSerNum );
+    HRESULT OnSampleQuality (
+        _bstr_t ReaderSerNum,
+        enum DPFPCaptureFeedbackEnum CaptureFeedback );
+};
+
+enum DPFPCaptureFeedbackEnum
+{
+    CaptureFeedbackGood = 0,
+    CaptureFeedbackNone = 1,
+    CaptureFeedbackTooLight = 2,
+    CaptureFeedbackTooDark = 3,
+    CaptureFeedbackTooNoisy = 4,
+    CaptureFeedbackLowContrast = 5,
+    CaptureFeedbackNotEnoughFtrs = 6,
+    CaptureFeedbackNoCentralRgn = 7,
+    CaptureFeedbackNoFinger = 8,
+    CaptureFeedbackTooHigh = 9,
+    CaptureFeedbackTooLow = 10,
+    CaptureFeedbackTooLeft = 11,
+    CaptureFeedbackTooRight = 12,
+    CaptureFeedbackTooStrange = 13,
+    CaptureFeedbackTooFast = 14,
+    CaptureFeedbackTooSkewed = 15,
+    CaptureFeedbackTooShort = 16,
+    CaptureFeedbackTooSlow = 17
+};
+
+struct __declspec(uuid("0a611435-b092-45c7-b928-137255359b7a"))
+DPFPReaderDescription;
+    // [ default ] interface IDPFPReaderDescription
+
+struct __declspec(uuid("2bf17ac6-58b6-4af2-82a3-1dd4c4f99ce2"))
+DPFPReadersCollection;
+    // [ default ] interface IDPFPReadersCollection
+
+struct __declspec(uuid("3fa859da-300c-4247-bd33-6011198399c0"))
+DPFPCapture;
+    // [ default ] interface IDPFPCapture
+    // [ default, source ] dispinterface _IDPFPCaptureEvents
+
+struct __declspec(uuid("f6cedb0e-a5f3-4c9c-bdb0-58b2bc9a4bf3"))
+DPFPSampleConversion;
+    // [ default ] interface IDPFPSampleConversion
+
+//
+// Wrapper method implementations
+//
+
+#include "DPFPDevX.tli"
+
+} // namespace DPFPDevXLib
+
+#pragma pack(pop)

@@ -1,0 +1,40 @@
+{
+  "name": "node-dp",
+  "version": "1.0.0",
+  "description": "Digital Persona One Touch SDK wrapper for nodejs",
+  "productName": "Digital Persona Fingerprint Bridge",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "fpserver": "node app.js --port=7978 --mode=verifier",
+    "fpproxy": "node app.js --port=7978 --mode=verifier --config=proxy.json",
+    "fpworker1": "node app.js --port=8001 --mode=verifier",
+    "fpworker2": "node app.js --port=8002 --mode=verifier"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tohenk/node-dp.git"
+  },
+  "dependencies": {
+    "bindings": "^1.5.0",
+    "jszip": "^3.2.2",
+    "nan": "^2.14.0",
+    "node-addon-api": "^1.7.1",
+    "socket.io": "^2.2.0"
+  },
+  "keywords": [
+    "digital persona",
+    "fingerprint",
+    "match",
+    "verify",
+    "identify",
+    "enroll"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^6.0.10",
+    "electron-packager": "^14.0.6",
+    "electron-rebuild": "^1.8.6",
+    "electron-winstaller": "^4.0.0"
+  }
+}
