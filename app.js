@@ -42,7 +42,9 @@ const FingerprintBridge = require('./bridge');
 let config = {};
 let configFile;
 // read configuration from command line values
-if (Cmd.get('config') && fs.existsSync(Cmd.get('config'))) {
+if (process.env.FP_CONFIG && fs.existsSync(process.env.FP_CONFIG)) {
+    configFile = process.env.FP_CONFIG;
+} else if (Cmd.get('config') && fs.existsSync(Cmd.get('config'))) {
     configFile = Cmd.get('config');
 } else if (fs.existsSync(path.join(__dirname, 'config.json'))) {
     configFile = path.join(__dirname, 'config.json');
