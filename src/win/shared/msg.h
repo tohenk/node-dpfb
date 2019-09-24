@@ -45,7 +45,7 @@ protected:
 
     void CreateHandle();
     void DestroyHandle();
-    static LRESULT WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+    static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 public:
     inline HWND GetHandle() {

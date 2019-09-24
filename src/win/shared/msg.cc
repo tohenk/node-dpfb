@@ -73,7 +73,7 @@ void CMsgWin::ProcessMessages()
     }
 }
 
-LRESULT CMsgWin::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK CMsgWin::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     try {
         CMsgWin *self = reinterpret_cast<CMsgWin*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));

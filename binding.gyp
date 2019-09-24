@@ -17,11 +17,6 @@
 							"<!(echo %ProgramFiles%)/DigitalPersona/One Touch SDK/C-C++/Include",
 							"src/win/shared"
 						],
-						"libraries": [
-							"<!(echo %ProgramFiles%)/DigitalPersona/One Touch SDK/C-C++/Lib/<@(target_arch)/DPFPApi.lib",
-							"<!(echo %ProgramFiles%)/DigitalPersona/One Touch SDK/C-C++/Lib/<@(target_arch)/dpHFtrEx.lib",
-							"<!(echo %ProgramFiles%)/DigitalPersona/One Touch SDK/C-C++/Lib/<@(target_arch)/dpHMatch.lib"
-						],
 						"msvs_settings": {
 							"VCCLCompilerTool": {
 								"ExceptionHandling": "2"  # /EHsc
@@ -30,6 +25,24 @@
 						"defines": [
 							"UNICODE",
 							"_UNICODE"
+						]
+					}
+				],
+				['OS=="win" and "<@(target_arch)"=="ia32"',
+					{
+						"libraries": [
+							"<!(echo %ProgramFiles%)/DigitalPersona/One Touch SDK/C-C++/Lib/win32/DPFPApi.lib",
+							"<!(echo %ProgramFiles%)/DigitalPersona/One Touch SDK/C-C++/Lib/win32/dpHFtrEx.lib",
+							"<!(echo %ProgramFiles%)/DigitalPersona/One Touch SDK/C-C++/Lib/win32/dpHMatch.lib"
+						]
+					}
+				],
+				['OS=="win" and "<@(target_arch)"=="x64"',
+					{
+						"libraries": [
+							"<!(echo %ProgramFiles%)/DigitalPersona/One Touch SDK/C-C++/Lib/x64/DPFPApi.lib",
+							"<!(echo %ProgramFiles%)/DigitalPersona/One Touch SDK/C-C++/Lib/x64/dpHFtrEx.lib",
+							"<!(echo %ProgramFiles%)/DigitalPersona/One Touch SDK/C-C++/Lib/x64/dpHMatch.lib"
 						]
 					}
 				]
