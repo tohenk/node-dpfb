@@ -88,7 +88,7 @@ class ProxyWorker {
         if (this.has(id)) {
             this.templates.delete(id);
             if (this.connected) {
-                this.socket.emit('unreg-template', {id: key});
+                this.socket.emit('unreg-template', {id: id});
             } else {
                 this.removes.push(id);
             }
