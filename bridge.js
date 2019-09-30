@@ -177,25 +177,25 @@ class FingerprintBridge {
             }
             const startAcquire = () => {
                 this.setStatus('Starting acquire');
-                if (op === this.FP_ENROLL) {
+                if (op == this.FP_ENROLL) {
                     this.fingers = [];
                 }
-                this.dp.startAcquire(op === this.FP_ENROLL ? true : false, (status, image, data) => {
+                this.dp.startAcquire(op == this.FP_ENROLL ? true : false, (status, image, data) => {
                     switch (status) {
                     case 'disconnected':
                         this.setStatus('Connect fingerprint reader', true);
-                        con.emit(op === this.FP_ENROLL ? 'enroll-status' : 'acquire-status', {status: status});
+                        con.emit(op == this.FP_ENROLL ? 'enroll-status' : 'acquire-status', {status: status});
                         break;
                     case 'connected':
                         this.setStatus('Swipe your finger', true);
-                        con.emit(op === this.FP_ENROLL ? 'enroll-status' : 'acquire-status', {status: status});
+                        con.emit(op == this.FP_ENROLL ? 'enroll-status' : 'acquire-status', {status: status});
                         break;
                     case 'error':
                         this.setStatus('Error occured, try again', true);
-                        con.emit(op === this.FP_ENROLL ? 'enroll-status' : 'acquire-status', {status: status});
+                        con.emit(op == this.FP_ENROLL ? 'enroll-status' : 'acquire-status', {status: status});
                         break;
                     case 'complete':
-                        if (op === this.FP_ENROLL) {
+                        if (op == this.FP_ENROLL) {
                             this.setStatus('Enroll completed', true);
                             this.fingers.push(data);
                             con.emit('enroll-complete', {image: image, data: data});

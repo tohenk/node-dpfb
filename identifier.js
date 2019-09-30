@@ -83,7 +83,7 @@ class FingerprintIdentifier {
             const ids = Array.from(this.templates.keys());
             const fingers = Array.from(this.templates.values());
             const count = Math.ceil(ids.length / this.maxFinger);
-            console.log('Starting identify %s', workId);
+            console.log('Starting identify %s with %d sample(s)', workId, fingers.length);
             let worker = null;
             let sequences = [];
             for (let i = 1; i <= count; i++) {
@@ -98,7 +98,7 @@ class FingerprintIdentifier {
             const q = new ntQueue(sequences, (seq) => {
                 if (worker && worker.idle) {
                     let start = (seq - 1) * this.maxFinger;
-                    let end = Math.min(start + this.maxFinger, ids.length - 1);
+                    let end = Math.min(start + this.maxFinger, ids.length) - 1;
                     worker.workId = workId;
                     worker.idle = false;
                     worker.w.postMessage({cmd: 'verify', work: work, start: start, end: end});
@@ -106,8 +106,12 @@ class FingerprintIdentifier {
                     q.next();
                 }
             }, () => {
-                worker = this.getWorker(workId);
-                return worker && worker.idle ? true : false;
+                let w = this.getWorker(workId);
+                if (w && w.idle) {
+                    worker = w;
+                    return true;
+                }
+                return false;
             });
             q.once('finish', (data) => {
                 work.finish = Date.now();
@@ -145,6 +149,7 @@ class FingerprintIdentifier {
                 switch (data.cmd) {
                     case 'done':
                         worker.idle = true;
+                        console.log('Worker %s done with %s', worker.workId, data.matched);
                         this.processQueue(worker.workId, data.matched);
                         break;
                 }
@@ -187,7 +192,7 @@ class FingerprintIdentifier {
 
     processQueue(workId, matched) {
         this.queues.forEach((q) => {
-            if (q.id === workId && q.queue) {
+            if (q.id == workId && q.queue) {
                 // worker is done
                 if (typeof matched != 'undefined') {
                     // match has found
@@ -211,7 +216,7 @@ class FingerprintIdentifier {
 
     removeQueue(workId) {
         for (let i = 0; i < this.queues.length; i++) {
-            if (this.queues[i].workId === workId) {
+            if (this.queues[i].workId == workId) {
                 this.queues.splice(i, 1);
                 break;
             }

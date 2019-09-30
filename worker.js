@@ -41,18 +41,23 @@ parentPort.on('message', (data) => {
     function verify(work, start, end) {
         stopped = false;
         proccessing = true;
-        count = end - start + 1;
+        let count = 0;
         let matched = null;
+        console.log('%d: Verifying %s from %d to %d', threadId, work.id, start, end);
         for (let idx = start; idx <= end; idx++) {
             if (stopped) {
+                console.log('%d: Verify stopped %s', threadId, work.id);
                 break;
             }
-            if (verifier.verify(work.feature, work.fingers[idx]) === 0) {
+            count++;
+            if (verifier.verify(work.feature, work.fingers[idx]) == 0) {
+                console.log('%d: Found matched at %d', threadId, idx);
                 matched = idx;
                 break;
             }
         }
         proccessing = false;
+        console.log('%d: Done verifying %d sample(s)', threadId, count);
         parentPort.postMessage({cmd: 'done', work: work, matched: matched, worker: threadId});
     }
 });
