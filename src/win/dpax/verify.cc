@@ -90,8 +90,11 @@ static Napi::Value Verify(const Napi::CallbackInfo& info) {
             }
         }
     }
-    catch (...) {
-        // nothing
+    catch (_com_error& e) {
+        _bstr_t err(e.ErrorMessage());
+        const char* msg = err;
+        Napi::Error::New(info.Env(), msg).ThrowAsJavaScriptException();
+        return info.Env().Undefined();
     }
     ftr = NULL;
     tmpl = NULL;
