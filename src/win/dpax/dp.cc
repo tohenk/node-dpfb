@@ -228,7 +228,7 @@ VARIANT fp_buff2sa(Local<Object> buff)
     size_t sz = node::Buffer::Length(buff);
     char *pData = new char[sz];
 
-    sa = SafeArrayCreateVector(VT_UI1, 0, sz - 1);
+    sa = SafeArrayCreateVector(VT_UI1, 0, sz);
     SafeArrayAccessData(sa, (LPVOID*)&pData);
     CopyMemory(pData, node::Buffer::Data(buff), sz);
     SafeArrayUnaccessData(sa);

@@ -22,22 +22,24 @@
  * SOFTWARE.
  */
 
-#include <napi.h>
+#include <assert.h>
+#include <stdlib.h>
+#include <node_api.h>
 #include "common.h"
-#include "fp.h"
 
-static CFPHandler *fp = NULL;
+typedef struct {
+    char* message;
+} VerifierData;
 
-VARIANT fp_buff2sa(Napi::ArrayBuffer buff)
+VARIANT fp_buff2sa(void* buff, size_t len)
 {
     VARIANT v = {};
     SAFEARRAY *sa = NULL;
-    size_t sz = buff.ByteLength();
-    char *pData = new char[sz];
+    char *pData = new char[len];
 
-    sa = SafeArrayCreateVector(VT_UI1, 0, sz - 1);
+    sa = SafeArrayCreateVector(VT_UI1, 0, len);
     SafeArrayAccessData(sa, (LPVOID*)&pData);
-    CopyMemory(pData, buff.Data(), sz);
+    CopyMemory(pData, buff, len);
     SafeArrayUnaccessData(sa);
     v.vt = VT_UI1 | VT_ARRAY;
     v.parray = sa;
@@ -45,69 +47,105 @@ VARIANT fp_buff2sa(Napi::ArrayBuffer buff)
     return v;
 }
 
-static Napi::Value Verify(const Napi::CallbackInfo& info) {
-    if (info.Length() < 2) {
-        Napi::Error::New(info.Env(), "Wrong number of arguments")
-            .ThrowAsJavaScriptException();
-        return info.Env().Undefined();
-    }
-    if (!info[0].IsArrayBuffer() || !info[1].IsArrayBuffer()) {
-        Napi::Error::New(info.Env(), "Argument must both an ArrayBuffer")
-            .ThrowAsJavaScriptException();
-        return info.Env().Undefined();
-    }
-
+static int DoVerify(VerifierData* data, variant_t ftdata, variant_t tmpldata) {
     int ret = -1;
-    IDPFPTemplatePtr tmpl = NULL;
+
+    IDPFPVerificationPtr verifier = NULL;
     IDPFPFeatureSetPtr ftr = NULL;
-    variant_t vTmpl = NULL;
-    variant_t vFtr = NULL;
+    IDPFPTemplatePtr tmpl = NULL;
 
-    if (!fp) {
-        fp = new CFPHandler();
-        fp->Initialize();
-    }
-
-    vFtr = _variant_t(fp_buff2sa(info[0].As<Napi::ArrayBuffer>()));
-    vTmpl = _variant_t(fp_buff2sa(info[1].As<Napi::ArrayBuffer>()));
-    ftr.CreateInstance(__uuidof(DPFPFeatureSet));
-    tmpl.CreateInstance(__uuidof(DPFPTemplate));
     try {
-        if (SUCCEEDED(ftr->Deserialize(vFtr))) {
-            if (SUCCEEDED(tmpl->Deserialize(vTmpl))) {
-                int res = fp->Identify(ftr, tmpl);
-                switch (res)
-                {
-                case CFPHandler::FP_VERIFY_MATCHED:
-                    ret = 0;
-                    break;
-                case CFPHandler::FP_VERIFY_NO_MATCH:
-                    ret = 1;
-                    break;
-                default:
-                    break;
-                }
+        verifier.CreateInstance(__uuidof(DPFPVerification));
+        ftr.CreateInstance(__uuidof(DPFPFeatureSet));
+        tmpl.CreateInstance(__uuidof(DPFPTemplate));
+
+        data->message = NULL;
+
+        if (SUCCEEDED(ftr->Deserialize(ftdata))) {
+            if (SUCCEEDED(tmpl->Deserialize(tmpldata))) {
+                IDPFPVerificationResultPtr res = verifier->Verify(ftr, tmpl);
+                ret = res->Verified ? 0 : 1;
             }
         }
     }
     catch (_com_error& e) {
         _bstr_t err(e.ErrorMessage());
         const char* msg = err;
-        Napi::Error::New(info.Env(), msg).ThrowAsJavaScriptException();
-        return info.Env().Undefined();
+        data->message = (char*) msg;
     }
     ftr = NULL;
     tmpl = NULL;
+    verifier = NULL;
 
-    return Napi::Number::New(info.Env(), ret);
+    return ret;
 }
 
-Napi::Object Init(Napi::Env env, Napi::Object exports) {
-  exports.Set(Napi::String::New(env, "verify"), Napi::Function::New(env, Verify));
-  return exports;
+static napi_value Verify(napi_env env, napi_callback_info info) {
+    VerifierData* data = NULL;
+    size_t argc = 2;
+    napi_value args[2];
+
+    assert(napi_get_cb_info(env, info, &argc, args, nullptr, ((void**)&data)) == napi_ok);
+    if (argc < 2) {
+        napi_throw_type_error(env, nullptr, "Wrong number of arguments");
+        return nullptr;
+    }
+
+    bool isBuff0, isBuff1;
+    assert(napi_is_arraybuffer(env, args[0], &isBuff0) == napi_ok);
+    assert(napi_is_arraybuffer(env, args[1], &isBuff1) == napi_ok);
+    if (!isBuff0 || !isBuff1) {
+        napi_throw_type_error(env, nullptr, "Argument must both an ArrayBuffer");
+        return nullptr;
+    }
+
+    void *featBuff, *tmplBuff;
+    size_t featLen, tmplLen;
+    assert(napi_get_arraybuffer_info(env, args[0], &featBuff, &featLen) == napi_ok);
+    assert(napi_get_arraybuffer_info(env, args[1], &tmplBuff, &tmplLen) == napi_ok);
+
+    variant_t vFeature, vTmpl;
+    vFeature = variant_t(fp_buff2sa(featBuff, featLen));
+    vTmpl = variant_t(fp_buff2sa(tmplBuff, tmplLen));
+
+    int res = DoVerify(data, vFeature, vTmpl);
+    if (data->message != NULL) {
+        napi_throw_type_error(env, nullptr, data->message);
+        return nullptr;
+    }
+
+    napi_value result;
+    assert(napi_create_int32(env, res, &result) == napi_ok);
+    return result;
 }
 
-NODE_API_MODULE(addon, Init)
+static void DeleteVerifierData(napi_env env, void* data, void* hint) {
+    VerifierData* _data = (VerifierData*) data;
+
+    CoUninitialize();
+
+    (void) env;
+    (void) hint;
+    free(_data);
+}
+
+static VerifierData* CreateVerifierData(napi_env env, napi_value exports) {
+    VerifierData* result = (VerifierData*) malloc(sizeof(*result));
+    assert(napi_wrap(env, exports, result, DeleteVerifierData, NULL, NULL) == napi_ok);
+    return result;
+}
+
+NAPI_MODULE_INIT(/*env, exports*/) {
+    CoInitialize(NULL);
+    VerifierData* data = CreateVerifierData(env, exports);
+    napi_property_descriptor bindings[] = {
+        {"verify", NULL, Verify, NULL, NULL, NULL, napi_enumerable, data}
+    };
+    assert(napi_define_properties(env, exports, sizeof(bindings) / sizeof(bindings[0]),
+        bindings) == napi_ok);
+
+    return exports;
+}
 
 //----------------------------------------------------------------------------------
 
@@ -115,10 +153,8 @@ bool APIENTRY DllMain(HMODULE hModule, DWORD  ulReason, LPVOID lpReserved)
 {
     switch (ulReason) {
     case DLL_PROCESS_ATTACH:
-        CoInitialize(NULL);
         break;
     case DLL_PROCESS_DETACH:
-        CoUninitialize();
         break;
     case DLL_THREAD_ATTACH:
         break;
