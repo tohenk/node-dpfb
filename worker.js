@@ -50,10 +50,15 @@ parentPort.on('message', (data) => {
                 break;
             }
             count++;
-            if (verifier.verify(work.feature, work.fingers[idx]) == 0) {
-                console.log('%d: Found matched at %d', threadId, idx);
-                matched = idx;
-                break;
+            try {
+                if (verifier.verify(work.feature, work.fingers[idx]) == 0) {
+                    console.log('%d: Found matched at %d', threadId, idx);
+                    matched = idx;
+                    break;
+                }
+            }
+            catch (err) {
+                console.error('%d: %d > %s', threadId, idx, err);
             }
         }
         proccessing = false;

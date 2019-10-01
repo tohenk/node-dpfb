@@ -149,7 +149,7 @@ class FingerprintIdentifier {
                 switch (data.cmd) {
                     case 'done':
                         worker.idle = true;
-                        console.log('Worker %s done with %s', worker.workId, data.matched);
+                        console.log('Worker %d: %s done with %s', data.worker, worker.workId, data.matched);
                         this.processQueue(worker.workId, data.matched);
                         break;
                 }
@@ -159,7 +159,7 @@ class FingerprintIdentifier {
             });
             worker.w.on('exit', (code) => {
                 console.log('Exit: %d', code);
-                delete this.workers[worker];
+                this.workers.splice(this.workers.indexOf(worker), 1);
             });
             worker.w.on('online', () => {
                 worker.idle = true;
