@@ -78,6 +78,12 @@ class ProxyIdentifier {
         return count;
     }
 
+    clear() {
+        for (let i = 0; i < this.workers.length; i++) {
+            this.workers[i].clear();
+        }
+    }
+
     identify(feature) {
         return new Promise((resolve, reject) => {
             let count = 0;
