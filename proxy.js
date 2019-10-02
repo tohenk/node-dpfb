@@ -89,22 +89,25 @@ class ProxyIdentifier {
             let count = 0;
             let done = 0;
             let start = Date.now();
+            let resolved = false;
             this.workers.forEach((worker) => {
                 if (worker.isConnected()) {
                     count++;
                     worker.identify(feature)
-                        .then((data) => {
+                        .then((response) => {
                             done++;
-                            if (data) {
+                            if (response.data) {
                                 // matched found or all has been done
-                                if (data.matched != null || done == count) {
+                                if ((response.data.matched != null || done == count) && !resolved) {
+                                    resolved = true;
                                     let finish = Date.now();
-                                    console.log('Done in %d ms, match is %s', finish - start, data.matched != null ? data.matched : 'none');
-                                    resolve(data);
+                                    console.log('Done in %d ms, match is %s', finish - start,
+                                        response.data.matched != null ? response.data.matched : 'none');
+                                    resolve(response);
                                 }
                             } else {
-                                if (done == count) {
-                                    resolve({matched: null});
+                                if (done == count && !resolved) {
+                                    resolve({data: {matched: null}});
                                 }
                             }
                         })
@@ -113,7 +116,7 @@ class ProxyIdentifier {
             });
             // no worker, just assume as no matching found
             if (count == 0) {
-                resolve({matched: null});
+                resolve({data: {matched: null}});
             }
         });
     }

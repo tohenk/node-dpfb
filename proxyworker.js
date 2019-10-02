@@ -116,8 +116,9 @@ class ProxyWorker {
         return new Promise((resolve, reject) => {
             if (this.connected) {
                 this.socket.emit('identify', {feature: feature});
-                this.socket.once('identify', (data) => {
-                    resolve(data);
+                this.socket.once('identify', (response) => {
+                    console.log('Got identify response with %s', JSON.stringify(response));
+                    resolve(response);
                 });
             } else {
                 resolve();
