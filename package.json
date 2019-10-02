@@ -9,7 +9,8 @@
     "fpserver": "node app.js --port=7978 --mode=verifier",
     "fpproxy": "node app.js --port=7978 --mode=verifier --config=proxy.json",
     "fpworker1": "node app.js --port=8001 --mode=verifier",
-    "fpworker2": "node app.js --port=8002 --mode=verifier"
+    "fpworker2": "node app.js --port=8002 --mode=verifier",
+    "package:win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --out=out --icon=assets/icons/app.ico"
   },
   "repository": {
     "type": "git",
