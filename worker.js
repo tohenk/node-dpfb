@@ -26,9 +26,10 @@ const {parentPort, threadId} = require('worker_threads');
 const verifier = require('bindings')('dpaxver');
 const util  = require('util');
 const ntUtil = require('./lib/util');
+const ntQueue = require('./lib/queue');
 
-let stopped = false;
 let proccessing = false;
+let queue = null;
 
 function verify(work, start, end) {
     stopped = false;
@@ -36,26 +37,34 @@ function verify(work, start, end) {
     let count = 0;
     let matched = null;
     log('%d> Verifying %s from %d to %d', threadId, work.id, start, end);
-    for (let idx = start; idx <= end; idx++) {
-        if (stopped) {
-            log('%d> Verify stopped %s', threadId, work.id);
-            break;
-        }
+    let sequences = [];
+    for (let i = start; i <= end; i++) {
+        sequences.push(i);
+    }
+    queue = new ntQueue(sequences, (idx) => {
+        let done = false;
         count++;
         try {
             if (verifier.verify(work.feature, work.fingers[idx]) == 0) {
                 log('%d> Found matched at %d', threadId, idx);
+                done = true;
                 matched = idx;
-                break;
+                queue.clear();
+                queue.done();
             }
         }
         catch (err) {
             error('%d> %d - %s', threadId, idx, err);
         }
-    }
-    proccessing = false;
-    log('%d> Done verifying %d sample(s)', threadId, count);
-    parentPort.postMessage({cmd: 'done', work: work, matched: matched, worker: threadId});
+        if (!done) {
+            queue.next();
+        }
+    });
+    queue.once('done', () => {
+        proccessing = false;
+        log('%d> Done verifying %d sample(s)', threadId, count);
+        parentPort.postMessage({cmd: 'done', work: work, matched: matched, worker: threadId});
+    });
 }
 
 function fmt(args) {
@@ -80,8 +89,10 @@ parentPort.on('message', (data) => {
             verify(data.work, data.start, data.end);
             break;
         case 'stop':
-            if (proccessing) {
-                stopped = true;
+            if (proccessing && queue) {
+                log('%d> Stopping queue', threadId);
+                queue.clear();
+                queue.done();
             }
             break;
     }
