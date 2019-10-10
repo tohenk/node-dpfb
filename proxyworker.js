@@ -22,11 +22,20 @@
  * SOFTWARE.
  */
 
+const FingerprintIdentifier = require('./identifier');
 const io = require('socket.io-client');
 
-class ProxyWorker {
-    constructor(url) {
-        this.url = url;
+class ProxyWorker extends FingerprintIdentifier {
+    constructor(options) {
+        super();
+        var options = options || {};
+        if (!options.url) {
+            throw new Error('Required url option must be set!');
+        }
+        if (typeof options.logger == 'function') {
+            this.logger = options.logger;
+        }
+        this.url = options.url;
         this.connected = false;
         this.templates = new Map();
         this.removes = [];
@@ -36,19 +45,19 @@ class ProxyWorker {
     init() {
         this.socket = io.connect(this.url, {reconnect: true});
         this.socket.on('connect', () => {
-            console.log('Connected to %s', this.url);
+            this.log('Connected to %s', this.url);
             this.socket.emit('self-test');
         });
         this.socket.on('disconnect', () => {
             this.connected = false;
-            console.log('Disconnected from %s', this.url);
+            this.log('Disconnected from %s', this.url);
         });
         this.socket.on('self-test', (response) => {
             if (response) {
                 let svrName = response.substr(0, response.indexOf('-'));
                 let svrVer = response.substr(response.indexOf('-') + 1);
                 if (svrName == 'DPFPBRIDGE') {
-                    console.log('Proxy connection ready');
+                    this.log('Proxy connection ready');
                     this.connected = true;
                     this.server = {name: svrName, protocol: svrVer};
                     this.syncTemplates();
@@ -117,7 +126,7 @@ class ProxyWorker {
             if (this.connected) {
                 this.socket.emit('identify', {feature: feature});
                 this.socket.once('identify', (response) => {
-                    console.log('Got identify response with %s', JSON.stringify(response));
+                    this.log('Got identify response with %s', JSON.stringify(response));
                     resolve(response);
                 });
             } else {

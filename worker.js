@@ -24,9 +24,56 @@
 
 const {parentPort, threadId} = require('worker_threads');
 const verifier = require('bindings')('dpaxver');
+const util  = require('util');
+const ntUtil = require('./lib/util');
 
 let stopped = false;
 let proccessing = false;
+
+function verify(work, start, end) {
+    stopped = false;
+    proccessing = true;
+    let count = 0;
+    let matched = null;
+    log('%d> Verifying %s from %d to %d', threadId, work.id, start, end);
+    for (let idx = start; idx <= end; idx++) {
+        if (stopped) {
+            log('%d> Verify stopped %s', threadId, work.id);
+            break;
+        }
+        count++;
+        try {
+            if (verifier.verify(work.feature, work.fingers[idx]) == 0) {
+                log('%d> Found matched at %d', threadId, idx);
+                matched = idx;
+                break;
+            }
+        }
+        catch (err) {
+            error('%d> %d - %s', threadId, idx, err);
+        }
+    }
+    proccessing = false;
+    log('%d> Done verifying %d sample(s)', threadId, count);
+    parentPort.postMessage({cmd: 'done', work: work, matched: matched, worker: threadId});
+}
+
+function fmt(args) {
+    if (Array.isArray(args) && args.length) {
+        const time = new Date();
+        args[0] = ntUtil.formatDate(time, 'dd-MM HH:mm:ss.zzz') + ' ' + args[0];
+        return util.format.apply(null, args);
+    }
+}
+
+function log() {
+    console.log(fmt(Array.from(arguments)));
+}
+
+function error() {
+    console.error(fmt(Array.from(arguments)));
+}
+
 parentPort.on('message', (data) => {
     switch (data.cmd) {
         case 'verify':
@@ -37,32 +84,5 @@ parentPort.on('message', (data) => {
                 stopped = true;
             }
             break;
-    }
-    function verify(work, start, end) {
-        stopped = false;
-        proccessing = true;
-        let count = 0;
-        let matched = null;
-        console.log('%d: Verifying %s from %d to %d', threadId, work.id, start, end);
-        for (let idx = start; idx <= end; idx++) {
-            if (stopped) {
-                console.log('%d: Verify stopped %s', threadId, work.id);
-                break;
-            }
-            count++;
-            try {
-                if (verifier.verify(work.feature, work.fingers[idx]) == 0) {
-                    console.log('%d: Found matched at %d', threadId, idx);
-                    matched = idx;
-                    break;
-                }
-            }
-            catch (err) {
-                console.error('%d: %d > %s', threadId, idx, err);
-            }
-        }
-        proccessing = false;
-        console.log('%d: Done verifying %d sample(s)', threadId, count);
-        parentPort.postMessage({cmd: 'done', work: work, matched: matched, worker: threadId});
     }
 });

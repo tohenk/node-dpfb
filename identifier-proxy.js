@@ -22,18 +22,27 @@
  * SOFTWARE.
  */
 
+const FingerprintIdentifier = require('./identifier');
 const Worker = require('./proxyworker');
 
-class ProxyIdentifier {
-    constructor(proxies) {
-        this.proxies = proxies;
+class FingerprintIdentifierProxy extends FingerprintIdentifier {
+    constructor(options) {
+        super();
+        var options = options || {};
+        if (!options.proxies) {
+            throw new Error('Required proxies option must be set!');
+        }
+        if (typeof options.logger == 'function') {
+            this.logger = options.logger;
+        }
+        this.proxies = options.proxies;
         this.workers = [];
         this.init();
     }
 
     init() {
         this.proxies.forEach((url) => {
-            this.workers.push(new Worker(url));
+            this.workers.push(new Worker({url: url, logger: this.logger}));
         });
         this.next = 0;
     }
@@ -101,7 +110,7 @@ class ProxyIdentifier {
                                 if ((response.data.matched != null || done == count) && !resolved) {
                                     resolved = true;
                                     let finish = Date.now();
-                                    console.log('Done in %d ms, match is %s', finish - start,
+                                    this.log('Done in %d ms, match is %s', finish - start,
                                         response.data.matched != null ? response.data.matched : 'none');
                                     resolve(response);
                                 }
@@ -122,4 +131,4 @@ class ProxyIdentifier {
     }
 }
 
-module.exports = ProxyIdentifier;
+module.exports = FingerprintIdentifierProxy;

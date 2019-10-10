@@ -24,6 +24,7 @@
 
 const util  = require('util');
 const JSZip = require('jszip');
+const ntUtil = require('./lib/util');
 
 class FingerprintBridge {
     VERSION = 'DPFPBRIDGE-1.0'
@@ -72,17 +73,17 @@ class FingerprintBridge {
 
     handleConnection(con) {
         con.on('disconnect', () => {
-            console.log('Connection %s ended', con.id);
+            this.log('Connection %s ended', con.id);
         });
         con.on('self-test', () => {
             con.emit('self-test', this.VERSION);
         });
         if (this.mode == this.MODE_BRIDGE || this.mode == this.MODE_MIXED) {
-            console.log('Bridge connection %s', con.id);
+            this.log('Bridge connection %s', con.id);
             this.handleBridgeCommand(con);
         }
         if (this.mode == this.MODE_VERIFIER || this.mode == this.MODE_MIXED) {
-            console.log('Verifier connection %s', con.id);
+            this.log('Verifier connection %s', con.id);
             this.handleVerifierCommand(con);
         }
     }
@@ -130,7 +131,7 @@ class FingerprintBridge {
                     this.getIdentifier().remove(data.id);
                 }
                 const success = this.getIdentifier().add(data.id, data.template);
-                console.log('Register template %d [%s]', data.id, success ? 'OK' : 'FAIL');
+                this.log('Register template %d [%s]', data.id, success ? 'OK' : 'FAIL');
                 con.emit('reg-template', {
                     id: data.id,
                     success: success
@@ -140,7 +141,7 @@ class FingerprintBridge {
         con.on('unreg-template', (data) => {
             if (data.id) {
                 const success = this.getIdentifier().remove(data.id);
-                console.log('Unregister template %d [%s]', data.id, success ? 'OK' : 'FAIL');
+                this.log('Unregister template %d [%s]', data.id, success ? 'OK' : 'FAIL');
                 con.emit('unreg-template', {
                     id: data.id,
                     success: success
@@ -247,11 +248,11 @@ class FingerprintBridge {
     getIdentifier() {
         if (!this.identifier) {
             if (this.proxies.length) {
-                const ProxyIdentifier = require('./proxy');
-                this.identifier = new ProxyIdentifier(this.proxies);
+                const FPIdentifierProxy = require('./identifier-proxy');
+                this.identifier = new FPIdentifierProxy({proxies: this.proxies, logger: this.log});
             } else {
-                const FPIdentifier = require('./identifier');
-                this.identifier = new FPIdentifier();
+                const FPIdentifierDP = require('./identifier-dp');
+                this.identifier = new FPIdentifierDP({logger: this.log});
             }
         }
         return this.identifier;
@@ -264,6 +265,16 @@ class FingerprintBridge {
         if (typeof this.onstatus == 'function') {
             this.onstatus(status, priority);
         }
+    }
+
+    log() {
+        const args = Array.from(arguments);
+        const time = new Date();
+        if (args.length) {
+            args[0] = ntUtil.formatDate(time, 'dd-MM HH:mm:ss.zzz') + ' ' + args[0];
+        }
+        const message = util.format.apply(null, args);
+        console.log(message);
     }
 }
 
