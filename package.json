@@ -10,7 +10,7 @@
     "fpproxy": "node app.js --port=7978 --mode=verifier --config=proxy.json",
     "fpworker1": "node app.js --port=8001 --mode=verifier",
     "fpworker2": "node app.js --port=8002 --mode=verifier",
-    "package:win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --out=out --icon=assets/icons/app.ico"
+    "package:win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --out=dist --icon=assets/icons/app.ico"
   },
   "repository": {
     "type": "git",
@@ -18,9 +18,9 @@
   },
   "dependencies": {
     "bindings": "^1.5.0",
-    "jszip": "^3.2.2",
-    "nan": "^2.14.0",
-    "socket.io": "^2.2.0"
+    "jszip": "^3.5.0",
+    "nan": "^2.14.2",
+    "socket.io": "^2.3.0"
   },
   "keywords": [
     "digital persona",
@@ -32,9 +32,9 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "electron": "^7.2.4",
-    "electron-packager": "^14.0.6",
-    "electron-rebuild": "^1.8.6",
-    "electron-winstaller": "^4.0.0"
+    "electron": "^10.1.5",
+    "electron-packager": "^14.2.1",
+    "electron-rebuild": "^1.11.0",
+    "electron-winstaller": "^4.0.1"
   }
 }
