@@ -116,7 +116,7 @@ class FingerprintBridge {
     handleVerifierCommand(con) {
         con.on('identify', (data) => {
             if (data.feature) {
-                this.fingerIdentify(con, data.feature);
+                this.fingerIdentify(con, data.feature, data.workid);
             }
         });
         con.on('count-template', () => {
@@ -237,9 +237,11 @@ class FingerprintBridge {
         }
     }
 
-    fingerIdentify(con, feature) {
-        this.getIdentifier().identify(feature)
+    fingerIdentify(con, feature, workid) {
+        const id = workid || con.id;
+        this.getIdentifier().identify(id, feature)
             .then((data) => {
+                this.log('Got identify response for %s => %s', id, JSON.stringify(data));
                 con.emit('identify', data);
             })
         ;

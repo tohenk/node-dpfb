@@ -121,14 +121,23 @@ class ProxyWorker extends FingerprintIdentifier {
         }
     }
 
-    identify(feature) {
+    identify(id, feature) {
         return new Promise((resolve, reject) => {
             if (this.connected) {
-                this.socket.emit('identify', {feature: feature});
-                this.socket.once('identify', (response) => {
-                    this.log('Got identify response with %s', JSON.stringify(response));
-                    resolve(response);
-                });
+                this.socket.emit('identify', {feature: feature, workid: id});
+                const f = () => {
+                    this.socket.once('identify', (response) => {
+                        // ensure response is for our
+                        if (response.ref == id) {
+                            this.log('Got identify response with %s from %s', JSON.stringify(response), this.url);
+                            resolve(response);
+                        } else {
+                            // listen once again
+                            f();
+                        }
+                    });
+                }
+                f();
             } else {
                 resolve();
             }

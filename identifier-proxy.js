@@ -93,16 +93,17 @@ class FingerprintIdentifierProxy extends FingerprintIdentifier {
         }
     }
 
-    identify(feature) {
+    identify(id, feature) {
         return new Promise((resolve, reject) => {
             let count = 0;
             let done = 0;
             let start = Date.now();
             let resolved = false;
+            const workId = this.genId();
             this.workers.forEach((worker) => {
                 if (worker.isConnected()) {
                     count++;
-                    worker.identify(feature)
+                    worker.identify(workId, feature)
                         .then((response) => {
                             done++;
                             if (response.data) {
@@ -110,13 +111,14 @@ class FingerprintIdentifierProxy extends FingerprintIdentifier {
                                 if ((response.data.matched != null || done == count) && !resolved) {
                                     resolved = true;
                                     let finish = Date.now();
-                                    this.log('Done in %d ms, match is %s', finish - start,
-                                        response.data.matched != null ? response.data.matched : 'none');
+                                    this.log('Done in %d ms, match is %s for %s', finish - start,
+                                        response.data.matched != null ? response.data.matched : 'none', id);
+                                    response.ref = id;
                                     resolve(response);
                                 }
                             } else {
                                 if (done == count && !resolved) {
-                                    resolve({data: {matched: null}});
+                                    resolve({ref: id, data: {matched: null}});
                                 }
                             }
                         })
@@ -125,7 +127,7 @@ class FingerprintIdentifierProxy extends FingerprintIdentifier {
             });
             // no worker, just assume as no matching found
             if (count == 0) {
-                resolve({data: {matched: null}});
+                resolve({ref: id, data: {matched: null}});
             }
         });
     }

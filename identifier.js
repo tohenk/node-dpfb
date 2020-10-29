@@ -22,6 +22,9 @@
  * SOFTWARE.
  */
 
+const crypto = require('crypto');
+const ntUtil = require('./lib/util');
+
 class FingerprintIdentifier {
     /**
      * Register fingerprint template.
@@ -82,10 +85,11 @@ class FingerprintIdentifier {
      *     }
      * }
      *
+     * @param {string} id Identify sequence id
      * @param {string} feature Fingerprint feature template
      * @returns {Promise}
      */
-    identify(feature) {
+    identify(id, feature) {
         throw new TypeError('Not implemented');
     }
 
@@ -101,6 +105,17 @@ class FingerprintIdentifier {
         } else {
             console.log.apply(null, args);
         }
+    }
+
+    /**
+     * Generate an ID.
+     *
+     * @returns {string}
+     */
+    genId() {
+        const shasum = crypto.createHash('sha1');
+        shasum.update(ntUtil.formatDate(new Date(), 'yyyyMMddHHmmsszzz') + (Math.random() * 1000000).toString());
+        return shasum.digest('hex').substr(0, 8);
     }
 }
 

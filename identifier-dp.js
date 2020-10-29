@@ -24,9 +24,7 @@
 
 const FingerprintIdentifier = require('./identifier');
 const {Worker} = require('worker_threads');
-const crypto = require('crypto');
 const ntQueue = require('./lib/queue');
-const ntUtil = require('./lib/util');
 
 class FingerprintIdentifierDP extends FingerprintIdentifier {
     constructor(options) {
@@ -79,16 +77,16 @@ class FingerprintIdentifierDP extends FingerprintIdentifier {
         return data.buffer;
     }
 
-    identify(feature) {
+    identify(id, feature) {
         return new Promise((resolve, reject) => {
             if (!this.templates.size) {
                 return reject('Templates empty');
             }
-            const workId = this.hashgen();
+            const workId = this.genId();
             const ids = Array.from(this.templates.keys());
             const fingers = Array.from(this.templates.values());
             const count = Math.ceil(ids.length / this.maxFinger);
-            this.log('Starting identify %s with %d sample(s)', workId, fingers.length);
+            this.log('Starting identify %s with %d sample(s) for %s', workId, fingers.length, id);
             let worker = null;
             let sequences = [];
             for (let i = 1; i <= count; i++) {
@@ -124,8 +122,9 @@ class FingerprintIdentifierDP extends FingerprintIdentifier {
                 if (data.matched != null) {
                     data.matched = ids[data.matched]
                 }
-                this.log('Done %s in %d ms, match is %s', workId, work.finish - work.start, data.matched != null ? data.matched : 'none');
-                resolve({id: workId, data: data});
+                this.log('Done %s in %d ms, match is %s for %s', workId, work.finish - work.start,
+                    data.matched != null ? data.matched : 'none', id);
+                resolve({ref: id, id: workId, data: data});
             });
             this.queues.push({
                 id: workId,
@@ -226,12 +225,6 @@ class FingerprintIdentifierDP extends FingerprintIdentifier {
                 break;
             }
         }
-    }
-
-    hashgen() {
-        const shasum = crypto.createHash('sha1');
-        shasum.update(ntUtil.formatDate(new Date(), 'yyyyMMddHHmmsszzz') + (Math.random() * 1000000).toString());
-        return shasum.digest('hex').substr(0, 8);
     }
 }
 
