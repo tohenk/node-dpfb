@@ -49,7 +49,6 @@ function verify(work, start, end) {
                 log('%d> Found matched at %d', threadId, idx);
                 done = true;
                 matched = idx;
-                queue.clear();
                 queue.done();
             }
         }
@@ -91,7 +90,6 @@ parentPort.on('message', (data) => {
         case 'stop':
             if (proccessing && queue) {
                 log('%d> Stopping queue', threadId);
-                queue.clear();
                 queue.done();
             }
             break;
