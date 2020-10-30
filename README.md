@@ -63,8 +63,8 @@ FP SERVER accepts commands described below.
 * `identify`, pass an object with `feature` and `workid` property as argument
   to identify the feature against registered fingerprint templates.
   It returns same event with an object contains `ref` (work id), `id` (internal
-  id of identifying process), and `data` property. To check successfull
-  operation of identifying, examine `matched` property of `data`.
+  id of identification process), and `data` property. To check successfull
+  operation of identification, examine `matched` property of `data`.
 
 ## Usage
 
