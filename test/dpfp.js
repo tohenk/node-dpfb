@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2019-2020 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -22,32 +22,44 @@
  * SOFTWARE.
  */
 
-const dp = require("../dpax");
+const dp = require("../dpfp");
 
-let templ;
+const MAX_FMD = 4;
+const MAX_CAPTURE = 5;
+let fmds = [];
+let capture = 0;
+
+dp.init();
 
 function verify() {
-	console.log("Swipe your finger to verify...");
-	dp.startAcquire((status, image, data) => {
+	dp.startAcquire((status, data) => {
 		switch (status) {
 		case 'disconnected':
+			console.log('Please connect fingerprint reader...');
 			break;
 		case 'connected':
+			console.log('Swipe your finger to verify...');
 			break;
 		case 'error':
 			break;
 		case 'complete':
-			if (dp.verify(templ, (success) => {
-				dp.stopAcquire(() => {
-					if (success) {
-						console.log('Finger matched');
-						dp.exit();
+			dp.identify(data, fmds)
+				.then((idx) => {
+					if (idx >= 0) {
+						console.log('Finger matched at %d', idx);
+						dp.stopAcquire(() => {
+							console.log('It is done, exiting...');
+							dp.exit();
+						});
 					} else {
 						console.log('Finger not matched, try again');
 						verify();
 					}
-				});
-			}));
+				})
+				.catch((err) => {
+					console.log(err);
+				})
+			;
 			break;
 		}
 	});
@@ -56,11 +68,10 @@ function verify() {
 function enroll() {
 	let stage = 1;
 	let stages = dp.getFeaturesLen();
-	console.log("Enroll your finger! You will need swipe your finger %d times.", stages);
-	dp.startAcquire(true, (status, image, data) => {
+	dp.startAcquire(true, (status, data) => {
 		switch (status) {
 		case 'disconnected':
-			console.log('Please connect fingerprint device...');
+			console.log('Please connect fingerprint reader...');
 			break;
 		case 'connected':
 			console.log('Swipe your finger to enroll...');
@@ -70,20 +81,17 @@ function enroll() {
 			break;
 		case 'complete':
 			console.log('Finger acquired (%d/%d)', stage, stages);
-			if (data) {
-				//console.log('--DATA:%d--', data.length);
-				//console.log(data);
-			}
 			stage++;
 			break;
 		case 'enrolled':
 			if (data) {
-				//console.log('--TEMPLATE:%d--', data.length);
-				//console.log(data);
-				templ = data;
+				fmds.push(data);
 			}
 			dp.stopAcquire(() => {
-				if (templ) {
+				if (fmds.length < MAX_FMD) {
+					console.log('Enroll another finger...');
+					enroll();
+				} else {
 					verify();
 				}
 			});
@@ -91,6 +99,5 @@ function enroll() {
 		}
 	});
 }
-const ret = dp.init(() => {
-	enroll();
-});
+
+enroll();

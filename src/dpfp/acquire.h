@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2019-2020 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -22,27 +22,12 @@
  * SOFTWARE.
  */
 
-#if !defined(FP_COMMON_INCLUDED_)
-#define FP_COMMON_INCLUDED_
+#if !defined(DPFP_ACQUIRE_H_INCLUDED)
+#define DPFP_ACQUIRE_H_INCLUDED
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
+#include "api.h"
 
-#define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
+bool fp_start_acquire(napi_env env, void* data, bool enroll, napi_value callback);
+bool fp_stop_acquire(napi_env env, void* data, napi_value callback);
 
-#pragma warning(disable : 4786)
-
-// ***** import the COM object's type library as usual. *****
-#include "DPFPDevX.tlh"
-#include "DPFPEngX.tlh"
-#include "DPFPShrX.tlh"
-using namespace DPFPDevXLib;
-using namespace DPFPEngXLib;
-using namespace DPFPShrXLib;
-
-// ***** include our TEventHandler.h header class and use the TEventHandlerNamespace namespace. *****
-#include "TEventHandler.h"
-using namespace TEventHandlerNamespace;
-
-#endif // !defined(FP_COMMON_INCLUDED_)
+#endif // !defined(DPFP_ACQUIRE_H_INCLUDED)

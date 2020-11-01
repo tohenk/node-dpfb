@@ -3,16 +3,10 @@
         {
             "name": "Win32",
             "includePath": [
-                "${USERPROFILE}\\.node-gyp\\12.10.0\\include\\node",
-                "${USERPROFILE}\\.node-gyp\\12.10.0\\src",
-                "${USERPROFILE}\\.node-gyp\\12.10.0\\deps\\openssl\\config",
-                "${USERPROFILE}\\.node-gyp\\12.10.0\\deps\\openssl\\openssl\\include",
-                "${USERPROFILE}\\.node-gyp\\12.10.0\\deps\\uv\\include",
-                "${USERPROFILE}\\.node-gyp\\12.10.0\\deps\\zlib",
-                "${USERPROFILE}\\.node-gyp\\12.10.0\\deps\\v8\\include",
+                "${USERPROFILE}\\AppData\\Local\\node-gyp\\Cache\\14.10.1\\include\\node",
+                "${ProgramFiles}\\DigitalPersona\\U.are.U SDK\\Include",
                 "${workspaceFolder}\\node_modules\\nan",
-                "${workspaceFolder}\\node_modules\\node-addon-api",
-                "${ProgramFiles}\\DigitalPersona\\One Touch SDK\\C-C++\\Include",
+                "${workspaceFolder}\\src\\shared",
                 "${workspaceFolder}/**"
             ],
             "defines": [

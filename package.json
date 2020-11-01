@@ -1,7 +1,7 @@
 {
   "name": "node-dp",
-  "version": "1.0.0",
-  "description": "Digital Persona One Touch SDK wrapper for nodejs",
+  "version": "2.0.0",
+  "description": "Digital Persona Fingerprint Bridge, a fingerprint acquisition and identification in the browser environment",
   "productName": "Digital Persona Fingerprint Bridge",
   "main": "main.js",
   "scripts": {

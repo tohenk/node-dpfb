@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2019-2020 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -25,61 +25,58 @@
 #include <windows.h>
 #include "msg.h"
 
-/////////////////////////////////////////////////////////////////////////////
-// CMsgWin
-
-CMsgWin::CMsgWin()
+MsgWin::MsgWin()
 {
-    m_WndClass = L"FPMessageReceiver";
-    m_Title = L"Fingerprint Message Receiver";
+    mWndClass = L"FPMessageReceiver";
+    mTitle = L"Fingerprint Message Receiver";
     CreateHandle();
 }
 
-CMsgWin::~CMsgWin()
+MsgWin::~MsgWin()
 {
     DestroyHandle();
 }
 
-void CMsgWin::CreateHandle()
+void MsgWin::CreateHandle()
 {
-    m_hInstance = GetModuleHandle(NULL);
+    mhInstance = GetModuleHandle(NULL);
     WNDCLASSEX wx = {};
     wx.cbSize = sizeof(WNDCLASSEX);
-    wx.lpfnWndProc = &CMsgWin::WndProc;
-    wx.hInstance = m_hInstance;
-    wx.lpszClassName = m_WndClass;
+    wx.lpfnWndProc = &MsgWin::WndProc;
+    wx.hInstance = mhInstance;
+    wx.lpszClassName = mWndClass;
     if (RegisterClassEx(&wx)) {
-        m_hWnd = CreateWindowEx(0, m_WndClass, m_Title, WS_POPUP | WS_EX_DLGMODALFRAME /*| WS_VISIBLE*/,
+        mhWnd = CreateWindowEx(0, mWndClass, mTitle, WS_POPUP | WS_EX_DLGMODALFRAME /*| WS_VISIBLE*/,
             0, 0, 0, 0, NULL, NULL, NULL, NULL);
-        SetWindowLongPtr(m_hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+        SetWindowLongPtr(mhWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
     }
 }
 
-void CMsgWin::DestroyHandle()
+void MsgWin::DestroyHandle()
 {
-    if (m_hWnd) {
-        UnregisterClass(m_WndClass, m_hInstance);
-        DestroyWindow(m_hWnd);
+    if (mhWnd) {
+        UnregisterClass(mWndClass, mhInstance);
+        DestroyWindow(mhWnd);
     }
 }
 
-void CMsgWin::ProcessMessages()
+void MsgWin::ProcessMessages()
 {
     MSG msg;
     // must be PeekMessage
-    if (PeekMessage(&msg, m_hWnd, 0, 0, PM_REMOVE)) {
+    if (PeekMessage(&msg, mhWnd, 0, 0, PM_REMOVE)) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
 }
 
-LRESULT CALLBACK CMsgWin::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK MsgWin::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     try {
-        CMsgWin *self = reinterpret_cast<CMsgWin*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+        MsgWin *self = reinterpret_cast<MsgWin*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
         if (self) {
-            if (self->m_Handler) {
-                if (self->m_Handler(uMsg, wParam, lParam)) {
+            if (self->mHandler) {
+                if (self->mHandler(uMsg, wParam, lParam)) {
                     return 0;
                 }
             }

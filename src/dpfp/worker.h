@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2019-2020 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -22,42 +22,11 @@
  * SOFTWARE.
  */
 
-#if !defined(FP_MESSAGE_INCLUDED_)
-#define FP_MESSAGE_INCLUDED_
+#if !defined(DPFP_WORKER_H_INCLUDED)
+#define DPFP_WORKER_H_INCLUDED
 
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
+#include "api.h"
 
-typedef bool (*msg_handler)(UINT, WPARAM, LPARAM);
+bool start_fp_worker(napi_env env, void* data);
 
-class CMsgWin {
-public:
-    CMsgWin();
-    ~CMsgWin();
-
-protected:
-    HINSTANCE       m_hInstance;
-    HWND            m_hWnd;
-    LPCWSTR         m_WndClass;
-    LPCWSTR         m_Title;
-    msg_handler     m_Handler;
-
-    void CreateHandle();
-    void DestroyHandle();
-    static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
-public:
-    inline HWND GetHandle() {
-        return m_hWnd;
-    }
-    inline void SetHandler(msg_handler handler) {
-        m_Handler = handler;
-    }
-    void ProcessMessages();
-};
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Developer Studio will insert additional declarations immediately before the previous line.
-
-#endif // !defined(FP_MESSAGE_INCLUDED_)
+#endif // !defined(DPFP_WORKER_H_INCLUDED)

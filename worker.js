@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2019-2020 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -23,46 +23,66 @@
  */
 
 const {parentPort, threadId} = require('worker_threads');
-const verifier = require('bindings')('dpaxver');
 const util  = require('util');
 const ntUtil = require('./lib/util');
 const ntQueue = require('./lib/queue');
+const dpfp = require('./dpfp');
 
+const identifyCount = dpfp.getIdentificationLen();
 let proccessing = false;
 let queue = null;
 
 function verify(work, start, end) {
-    stopped = false;
     proccessing = true;
     let count = 0;
     let matched = null;
     log('%d> Verifying %s from %d to %d', threadId, work.id, start, end);
-    let sequences = [];
-    for (let i = start; i <= end; i++) {
-        sequences.push(i);
-    }
-    queue = new ntQueue(sequences, (idx) => {
-        let done = false;
-        count++;
-        try {
-            if (verifier.verify(work.feature, work.fingers[idx]) == 0) {
-                log('%d> Found matched at %d', threadId, idx);
-                done = true;
-                matched = idx;
-                queue.done();
+    let fps = [];
+    let current = start;
+    while (current <= end) {
+        let data = {
+            start: current,
+            fmds: []
+        };
+        for (let i = 0; i < identifyCount; i++) {
+            if (current + i > end) {
+                break;
             }
+            data.fmds.push(work.fingers[current + i]);
+        }
+        fps.push(data);
+        current += identifyCount;
+    }
+    queue = new ntQueue(fps, (d) => {
+        try {
+            count += d.fmds.length;
+            dpfp.identify(work.feature, d.fmds)
+                .then((idx) => {
+                    if (idx >= 0) {
+                        log('%d> Found matched at %d', threadId, d.start + idx);
+                        matched = d.start + idx;
+                        queue.done();
+                    } else {
+                        queue.next();
+                    }
+                })
+                .catch((err) => {
+                    error('%d> %d - %s', threadId, d.start, err);
+                    queue.next();
+                })
+            ;
         }
         catch (err) {
-            error('%d> %d - %s', threadId, idx, err);
-        }
-        if (!done) {
+            error('%d> %d - %s', threadId, d.start, err);
             queue.next();
         }
     });
     queue.once('done', () => {
-        proccessing = false;
-        log('%d> Done verifying %d sample(s)', threadId, count);
-        parentPort.postMessage({cmd: 'done', work: work, matched: matched, worker: threadId});
+        if (proccessing) {
+            proccessing = false;
+            log('%d> Done verifying %d sample(s)', threadId, count);
+            parentPort.postMessage({cmd: 'done', work: work, matched: matched, worker: threadId});
+        }
     });
 }
 
@@ -90,6 +110,7 @@ parentPort.on('message', (data) => {
         case 'stop':
             if (proccessing && queue) {
                 log('%d> Stopping queue', threadId);
+                proccessing = false;
                 queue.done();
             }
             break;

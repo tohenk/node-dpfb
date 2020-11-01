@@ -34,13 +34,13 @@ listening at port `7879`. FP BRIDGE accepts commands described below.
 
   Listen for the following events when capturing:
   * `acquire-status` which contains the capture status.
-  * `acquire-complete` which contains the captured image and fingerprint data.
+  * `acquire-complete` which contains the fingerprint data.
 
 * `enroll`, start fingerprint enrollment.
 
   Listen for the following events when enrolling:
   * `enroll-status` which contains the capture status.
-  * `enroll-complete` which contains the capture image and fingerprint data.
+  * `enroll-complete` which contains the fingerprint data.
   * `enroll-finished` which contains the zipped fingerprint datas.
 
 * `stop`, stop fingerprint acquisition or enrollment.
@@ -72,7 +72,7 @@ FP SERVER accepts commands described below.
 
 * `node-gyp` must already been installed with its dependencies (build tools),
   to do so, type `npm install -g node-gyp`.
-* Digital Persona One Touch SDK has been installed.
+* Digital Persona U.are.U SDK has been installed.
 
 ### Building
 

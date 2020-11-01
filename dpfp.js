@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2019-2020 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -22,28 +22,4 @@
  * SOFTWARE.
  */
 
-#if !defined(FP_COMMON_INCLUDED_)
-#define FP_COMMON_INCLUDED_
-
-#if _MSC_VER >= 1000
-#pragma once
-#endif // _MSC_VER >= 1000
-
-#define VC_EXTRALEAN
-
-#include <iostream>
-#include <comdef.h>
-#include <windows.h>
-
-#include "dpDefs.h"
-#include "dpRCodes.h"
-#include "dpFtrEx.h"
-#include "dpMatch.h"
-#include "DPDevClt.h"
-
-inline void _com_test_error(HRESULT hr) {
-    if (FAILED(hr))
-        _com_issue_error(hr);
-}
-
-#endif // !defined(FP_COMMON_INCLUDED_)
+module.exports = require('bindings')('dpfp');

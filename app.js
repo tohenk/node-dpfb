@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2019-2020 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -78,28 +78,40 @@ if (config.mode) {
 }
 
 function startFingerprintBridge(options) {
-    var options = options || {};
-    const port = config.port || 7879;
-    const http = require('http').createServer();
-    const io = require('socket.io')(http);
-    http.listen(port, () => {
-        const logdir = config.logdir || path.join(__dirname, 'logs');
-        if (!fs.existsSync(logdir)) fs.mkdirSync(logdir);
-        const logfile = path.join(logdir, 'app.log');
-        const logger = new Logger(logfile);
-        fp = new FingerprintBridge({
-            socket: io,
-            logger: logger,
-            mode: config.mode || 1,
-            proxies: config.proxies || [],
-            onstatus: (status, priority) => {
-                console.log('FP: %s', status);
-                if (typeof options.onstatus == 'function') {
-                    options.onstatus(status, priority);
+    return new Promise((resolve, reject) => {
+        options = options || {};
+        const port = config.port || 7879;
+        const http = require('http').createServer();
+        const io = require('socket.io')(http);
+        http.listen(port, () => {
+            const logdir = config.logdir || path.join(__dirname, 'logs');
+            if (!fs.existsSync(logdir)) fs.mkdirSync(logdir);
+            const logfile = path.join(logdir, 'app.log');
+            const logger = new Logger(logfile);
+            const fp = new FingerprintBridge({
+                socket: io,
+                logger: logger,
+                mode: config.mode || 1,
+                proxies: config.proxies || [],
+                onstatus: (status, priority) => {
+                    console.log('FP: %s', status);
+                    if (typeof options.onstatus == 'function') {
+                        options.onstatus(status, priority);
+                    }
                 }
-            }
+            });
+            process.on('exit', (code) => {
+                fp.finalize();
+            });
+            process.on('SIGTERM', () => {
+                fp.finalize();
+            });
+            process.on('SIGINT', () => {
+                process.exit();
+            });
+            console.log('%s ready on port %s...', options.title ? options.title : 'DPFP Verifier', port);
+            resolve(fp);
         });
-        console.log('%s ready on port %s...', options.title ? options.title : 'DPFP Verifier', port);
     });
 }
 

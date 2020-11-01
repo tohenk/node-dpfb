@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2019-2020 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -52,10 +52,9 @@ class FingerprintBridge {
 
     init() {
         if (this.mode == this.MODE_BRIDGE || this.mode == this.MODE_MIXED) {
-            this.dp = require('./dpax');
-            this.dp.init(() => {
-                this.initialized = true;
-            });
+            this.dp = require('./dpfp');
+            this.dp.init();
+            this.initialized = true;
         }
         if ((this.mode == this.MODE_VERIFIER || this.mode == this.MODE_MIXED) && this.proxies.length) {
             this.getIdentifier();
@@ -181,7 +180,7 @@ class FingerprintBridge {
                 if (op == this.FP_ENROLL) {
                     this.fingers = [];
                 }
-                this.dp.startAcquire(op == this.FP_ENROLL ? true : false, (status, image, data) => {
+                this.dp.startAcquire(op == this.FP_ENROLL ? true : false, (status, data) => {
                     switch (status) {
                     case 'disconnected':
                         this.setStatus('Connect fingerprint reader', true);
@@ -199,11 +198,11 @@ class FingerprintBridge {
                         if (op == this.FP_ENROLL) {
                             this.setStatus('Enroll completed', true);
                             this.fingers.push(data);
-                            con.emit('enroll-complete', {image: image, data: data});
+                            con.emit('enroll-complete', {data: data});
                         } else {
                             this.setStatus('Acquire completed', true);
                             stopAcquire(() => {
-                                con.emit('acquire-complete', {image: image, data: data});
+                                con.emit('acquire-complete', {data: data});
                             });
                         }
                         break;

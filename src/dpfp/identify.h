@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2019-2020 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -22,4 +22,11 @@
  * SOFTWARE.
  */
 
-module.exports = require('bindings')('dpax');
+#if !defined(DPFP_IDENTIFY_H_INCLUDED)
+#define DPFP_IDENTIFY_H_INCLUDED
+
+#include "api.h"
+
+napi_value fp_start_identify(napi_env env, void* data, napi_value feature, napi_value fmds);
+
+#endif // !defined(DPFP_IDENTIFY_H_INCLUDED)
