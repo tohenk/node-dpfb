@@ -257,7 +257,9 @@ static FP_API_DATA* create_fp_api_data(napi_env env, napi_value exports) {
     api_data->reader = new DPFPReader();
     api_data->init = false;
     api_data->exit = false;
+#ifdef _WIN32
     api_data->msg = NULL;
+#endif
     api_data->worker = {NULL};
     api_data->acquire = {true, NULL, NULL, NULL, NULL, NULL};
     api_data->compare = {NULL, NULL, false, NULL, 0, NULL, 0};

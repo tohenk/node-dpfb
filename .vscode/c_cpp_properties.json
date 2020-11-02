@@ -10,7 +10,6 @@
                 "${workspaceFolder}/**"
             ],
             "defines": [
-                "_DEBUG",
                 "UNICODE",
                 "_UNICODE"
             ],
@@ -19,6 +18,20 @@
             "cStandard": "c11",
             "cppStandard": "c++17",
             "intelliSenseMode": "msvc-x64"
+        },
+        {
+            "name": "Linux",
+            "includePath": [
+                "${HOME}/.cache/node-gyp/14.14.0/include/node",
+                "/opt/DigitalPersona/urusdk-linux/Include",
+                "${workspaceFolder}/node_modules/nan",
+                "${workspaceFolder}/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "gcc-x64"
         }
     ],
     "version": 4

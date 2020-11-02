@@ -25,7 +25,9 @@
 #include "fp.h"
 
 DPFPReader::DPFPReader():
+#ifdef _WIN32
     mHandle(NULL),
+#endif
     mStates(STATE_OP_IDLE),
     mMode(MODE_CAPTURE),
     mDev(NULL),
@@ -57,14 +59,18 @@ void DPFPReader::initialize()
 {
     mInitialized = DPFPDD_SUCCESS == dpfpdd_init();
     if (mInitialized) {
+#ifdef _WIN32
         CoInitializeEx(NULL, 0);
+#endif
     }
 }
 
 void DPFPReader::finalize()
 {
     if (mInitialized) {
-		CoUninitialize();
+#ifdef _WIN32
+        CoUninitialize();
+#endif
         dpfpdd_exit();
     }
 }
@@ -382,6 +388,7 @@ void DPFPReader::setTickRes(unsigned int tick, int res)
     mTicks[tick].result = res;
 }
 
+#ifdef _WIN32
 void DPFPReader::setHandle(HWND handle)
 {
     mHandle = handle;
@@ -391,6 +398,7 @@ HWND DPFPReader::getHandle()
 {
     return mHandle;
 }
+#endif
 
 unsigned int DPFPReader::getFeaturesLen()
 {
@@ -563,7 +571,7 @@ bool DPFPReader::compare(unsigned char* feature, unsigned int featurelen,
     if (feature != NULL && fmd != NULL) {
         unsigned int fmr = 0;
         int ret = dpfj_compare(mCaptureFormat, feature, featurelen, 0, 
-		    fmt, fmd, fmdlen, 0, &fmr);
+            fmt, fmd, fmdlen, 0, &fmr);
         if (DPFPDD_SUCCESS == ret) {
             if (fmr < mFalseMatchRate) {
                 fp_dbg("Fingerprint matched, score: %d\n", fmr);
@@ -581,10 +589,10 @@ int DPFPReader::identify(unsigned char* feature, unsigned int featurelen,
 {
     if (feature != NULL && fmds != NULL) {
         unsigned int sz = fmdsz;
-		DPFJ_CANDIDATE* candidates = new DPFJ_CANDIDATE[fmdsz];
+        DPFJ_CANDIDATE* candidates = new DPFJ_CANDIDATE[fmdsz];
         unsigned int fmr = mFalseMatchRate;
         int ret = dpfj_identify(mCaptureFormat, feature, featurelen, 0, 
-		    fmt, fmdsz, fmds, fmdlens, fmr, &sz, candidates);
+            fmt, fmdsz, fmds, fmdlens, fmr, &sz, candidates);
         if (DPFPDD_SUCCESS == ret) {
             if (sz > 0) {
                 if (compare(feature, featurelen, fmds[candidates[0].fmd_idx],
@@ -609,16 +617,24 @@ void DPAPICALL DPFPReader::captureCallback(void* ctx, unsigned int reserved,
 {
     if (ctx == NULL || data == NULL) return;
     DPFPReader* reader = reinterpret_cast<DPFPReader*>(ctx);
+#ifdef _WIN32
     PostMessage(reader->getHandle(), DPFPReader::WM_FP_MESSAGE, reinterpret_cast<WPARAM>(ctx),
         reinterpret_cast<LPARAM>(data));
+#endif
+#ifdef __linux__
+    DPFPDD_CAPTURE_CALLBACK_DATA_0* cb = reinterpret_cast<DPFPDD_CAPTURE_CALLBACK_DATA_0*>(data);
+    reader->handleCallback(cb);
+#endif
 }
 
+#ifdef _WIN32
 bool fp_handle_message(UINT uMsg, WPARAM wParam, LPARAM lParam) {
     if (DPFPReader::WM_FP_MESSAGE == uMsg) {
         DPFPReader* reader = reinterpret_cast<DPFPReader*>(wParam);
-	    DPFPDD_CAPTURE_CALLBACK_DATA_0* data = reinterpret_cast<DPFPDD_CAPTURE_CALLBACK_DATA_0*>(lParam);
+        DPFPDD_CAPTURE_CALLBACK_DATA_0* data = reinterpret_cast<DPFPDD_CAPTURE_CALLBACK_DATA_0*>(lParam);
         reader->handleCallback(data);
         return true;
     }
     return false;
 }
+#endif

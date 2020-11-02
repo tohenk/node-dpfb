@@ -31,6 +31,7 @@
 #ifdef DPFP_DBG
 #include <iostream>
 #endif
+#include <string>
 #include <vector>
 #ifdef _WIN32
 #include <windows.h>
@@ -50,7 +51,9 @@
 
 using namespace std;
 
+#ifdef _WIN32
 bool fp_handle_message(UINT uMsg, WPARAM wParam, LPARAM lParam);
+#endif
 
 typedef struct {
     uint64_t last;
@@ -64,9 +67,11 @@ typedef void (*DPFP_ENROLL_HANDLER)(void*);
 
 class DPFPReader {
 public:    
+#ifdef _WIN32
     enum {
         WM_FP_MESSAGE = WM_USER + 1403,
     };
+#endif
     enum {
         TICK_READER,
         TICK_STATUS,
@@ -93,7 +98,9 @@ public:
     };
 
 private:
+#ifdef _WIN32
     HWND mHandle;
+#endif
     DPFPDD_DEV mDev;
     vector<string> mReaders;
     int mReaderIdx;
@@ -147,8 +154,10 @@ public:
 public:
     DPFPReader();
     ~DPFPReader();
+#ifdef _WIN32
     void setHandle(HWND handle);
     HWND getHandle();
+#endif
     unsigned int getFeaturesLen();
     unsigned int getIdentificationLen();
     vector<string> getReaders();

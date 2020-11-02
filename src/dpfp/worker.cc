@@ -27,16 +27,19 @@
 static void fp_prep_message_receiver(void* data) {
     FP_API_DATA* api_data = (FP_API_DATA*) data;
 
+#ifdef _WIN32
     if (api_data->msg == NULL) {
         api_data->msg = new MsgWin();
         api_data->msg->SetHandler(fp_handle_message);
         api_data->reader->setHandle(api_data->msg->GetHandle());
     }
+#endif
 }
 
 static void fp_focus_window(void* data, bool focus) {
     FP_API_DATA* api_data = (FP_API_DATA*) data;
 
+#ifdef _WIN32
     if (api_data->msg != NULL) {
         if (focus) {
             if (!IsWindowVisible(api_data->msg->GetHandle())) {
@@ -51,6 +54,7 @@ static void fp_focus_window(void* data, bool focus) {
             }
         }
     }
+#endif
 }
 
 static void fp_do_work(napi_env env, void* data) {
@@ -70,10 +74,15 @@ static void fp_do_work(napi_env env, void* data) {
             api_data->reader->doIdle();
             fp_focus_window(data, false);
         }
+#ifdef _WIN32
         if (api_data->msg != NULL) {
             api_data->msg->ProcessMessages();
         }
         Sleep(10);
+#endif
+#ifdef __linux__
+        usleep(10);
+#endif
     }
 }
 

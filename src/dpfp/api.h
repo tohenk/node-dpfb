@@ -26,14 +26,18 @@
 #define DPFP_API_H_INCLUDED
 
 #include <assert.h>
-#include <iostream>
 #include <queue>
 #include <stdlib.h>
-
+#ifdef __linux__
+#include <string.h>
+#include <unistd.h>
+#endif
 #include <node_api.h>
 
 #include "fp.h"
+#ifdef _WIN32
 #include "msg.h"
+#endif
 
 typedef enum {
     FP_ACQUIRE_READER,
@@ -56,7 +60,9 @@ typedef struct {
 typedef struct {
     bool init;
     bool exit;
+#ifdef _WIN32
     MsgWin* msg;
+#endif
     DPFPReader* reader;
     struct {
         napi_async_work work;

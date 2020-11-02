@@ -70,7 +70,12 @@ static void fp_start_acquire_call(napi_env env, napi_value cb, void* context, vo
         if (info.data != NULL) {
             void* buff;
             assert(napi_ok == napi_create_arraybuffer(env, info.len, &buff, &argv[1]));
+#ifdef _WIN32
             memcpy_s(buff, info.len, info.data, info.len);
+#endif
+#ifdef __linux__
+            memcpy(buff, info.data, info.len);
+#endif
         } else {
             assert(napi_ok == napi_get_undefined(env, &argv[1]));
         }
@@ -126,7 +131,12 @@ static void fp_do_start_acquire(napi_env env, void* data) {
                 }
                 api_data->acquire.q->pop();
             }
+#ifdef _WIN32
             Sleep(10);
+#endif
+#ifdef __linux__
+            usleep(10);
+#endif
         }
         api_data->reader->setContext(NULL);
         api_data->reader->setReaderHandler(NULL);
@@ -187,7 +197,12 @@ static void fp_do_stop_acquire(napi_env env, void* data) {
             if (api_data->exit || api_data->acquire.work == NULL) {
                 break;
             }
+#ifdef _WIN32
             Sleep(10);
+#endif
+#ifdef __linux__
+            usleep(10);
+#endif
         }
         assert(napi_ok == napi_call_threadsafe_function(api_data->acquire.sfn, NULL,
             napi_tsfn_blocking));

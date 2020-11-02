@@ -3,7 +3,6 @@
 		{
 			"target_name": "dpfp",
 			"sources": [
-				"src/shared/msg.cc",
 				"src/dpfp/fp.cc",
 				"src/dpfp/worker.cc",
 				"src/dpfp/acquire.cc",
@@ -14,6 +13,9 @@
 			"conditions": [
 				['OS=="win"',
 					{
+						"sources": [
+							"src/shared/msg.cc",
+						],
 						"include_dirs": [
 							"<!(echo %ProgramFiles%)/DigitalPersona/U.are.U SDK/Include",
 							"src/shared"
@@ -42,6 +44,17 @@
 						"libraries": [
 							"<!(echo %ProgramFiles%)/DigitalPersona/U.are.U SDK/Windows/Lib/x64/dpfpdd.lib",
 							"<!(echo %ProgramFiles%)/DigitalPersona/U.are.U SDK/Windows/Lib/x64/dpfj.lib"
+						]
+					}
+				],
+				['OS=="linux"',
+					{
+						"include_dirs": [
+							"/opt/DigitalPersona/urusdk-linux/Include"
+						],
+						"libraries": [
+							"/lib/libdpfpdd.so",
+							"/lib/libdpfj.so"
 						]
 					}
 				]
