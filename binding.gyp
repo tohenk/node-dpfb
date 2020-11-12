@@ -53,8 +53,8 @@
 							"/opt/DigitalPersona/urusdk-linux/Include"
 						],
 						"libraries": [
-							"/lib/libdpfpdd.so",
-							"/lib/libdpfj.so"
+							"/usr/lib/libdpfpdd.so",
+							"/usr/lib/libdpfj.so"
 						]
 					}
 				]
