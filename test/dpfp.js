@@ -31,6 +31,8 @@ let capture = 0;
 
 dp.init();
 
+console.log('Readers: %s', JSON.stringify(dp.getReaders()));
+
 function verify() {
 	dp.startAcquire((status, data) => {
 		switch (status) {

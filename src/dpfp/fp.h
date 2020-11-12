@@ -160,7 +160,7 @@ public:
 #endif
     unsigned int getFeaturesLen();
     unsigned int getIdentificationLen();
-    vector<string> getReaders();
+    vector<string> getReaders(bool query = false);
     bool setReader(char* reader);
     int getReaderIdx();
     bool setReaderIdx(int reader);

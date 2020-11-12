@@ -68,20 +68,20 @@ static napi_value fp_get_identification_len(napi_env env, napi_callback_info inf
     return res;
 }
 
-/*static napi_value fp_get_readers(napi_env env, napi_callback_info info) {
+static napi_value fp_get_readers(napi_env env, napi_callback_info info) {
     napi_value res = NULL;
     size_t argc = 0;
     napi_value argv;
     FP_API_DATA* api_data = NULL;
 
     assert(napi_ok == napi_get_cb_info(env, info, &argc, &argv, NULL, ((void**)&api_data)));
-    api_data->reader->queryReader();
-    unsigned int cnt = api_data->reader->getReaders().size();
+    vector<string> readers = api_data->reader->getReaders(true);
+    unsigned int cnt = readers.size();
     if (cnt > 0) {
         assert(napi_ok == napi_create_array_with_length(env, cnt, &res));
         for (unsigned int i = 0; i < cnt; i++) {
             napi_value name;
-            assert(napi_ok == napi_create_string_utf8(env, api_data->reader->getReaders()[i].c_str(),
+            assert(napi_ok == napi_create_string_utf8(env, readers[i].c_str(),
                 NAPI_AUTO_LENGTH, &name));
             assert(napi_ok == napi_set_element(env, res, i, name));
         }
@@ -103,7 +103,7 @@ static napi_value fp_select_reader(napi_env env, napi_callback_info info) {
         assert(napi_ok == napi_get_boolean(env, api_data->reader->setReader(reader), &res));
     }
     return res;
-}*/
+}
 
 static napi_value fp_acquire_start(napi_env env, napi_callback_info info) {
     napi_value res = NULL;
@@ -275,8 +275,8 @@ NAPI_MODULE_INIT(/*env, exports*/) {
         {"exit", NULL, fp_exit, NULL, NULL, NULL, napi_enumerable, api_data},
         {"getFeaturesLen", NULL, fp_get_features_len, NULL, NULL, NULL, napi_enumerable, api_data},
         {"getIdentificationLen", NULL, fp_get_identification_len, NULL, NULL, NULL, napi_enumerable, api_data},
-        //{"getReaders", NULL, fp_get_readers, NULL, NULL, NULL, napi_enumerable, api_data},
-        //{"selectReader", NULL, fp_select_reader, NULL, NULL, NULL, napi_enumerable, api_data},
+        {"getReaders", NULL, fp_get_readers, NULL, NULL, NULL, napi_enumerable, api_data},
+        {"selectReader", NULL, fp_select_reader, NULL, NULL, NULL, napi_enumerable, api_data},
         {"startAcquire", NULL, fp_acquire_start, NULL, NULL, NULL, napi_enumerable, api_data},
         {"stopAcquire", NULL, fp_acquire_stop, NULL, NULL, NULL, napi_enumerable, api_data},
         {"isAcquiring", NULL, fp_is_acquiring, NULL, NULL, NULL, napi_enumerable, api_data},

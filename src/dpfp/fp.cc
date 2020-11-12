@@ -410,8 +410,11 @@ unsigned int DPFPReader::getIdentificationLen()
     return DPFP_IDENTIFICATION_LEN;
 }
 
-vector<string> DPFPReader::getReaders()
+vector<string> DPFPReader::getReaders(bool query)
 {
+    if (query) {
+        queryReader();
+    }
     return mReaders;
 }
 
