@@ -196,6 +196,7 @@ bool DPFPReader::prepareEnroll()
     if (mDev != NULL) {
         if (mMode == MODE_ENROLL) {
             if (!inState(STATE_PREP_ENROLL)) {
+                dpfj_finish_enrollment();
                 int ret = dpfj_start_enrollment(mEnrollFormat);
                 if (DPFPDD_SUCCESS == ret) {
                     fp_dbg("Enrollment started\n");
