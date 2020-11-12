@@ -29,11 +29,9 @@ const ntQueue = require('./lib/queue');
 const dpfp = require('./dpfp');
 
 const identifyCount = dpfp.getIdentificationLen();
-let proccessing = false;
 let queue = null;
 
 function verify(work, start, end) {
-    proccessing = true;
     let count = 0;
     let matched = null;
     log('%d> Verifying %s from %d to %d', threadId, work.id, start, end);
@@ -78,11 +76,8 @@ function verify(work, start, end) {
         }
     });
     queue.once('done', () => {
-        if (proccessing) {
-            proccessing = false;
-            log('%d> Done verifying %d sample(s)', threadId, count);
-            parentPort.postMessage({cmd: 'done', work: work, matched: matched, worker: threadId});
-        }
+        log('%d> Done verifying %d sample(s)', threadId, count);
+        parentPort.postMessage({cmd: 'done', work: work, matched: matched, worker: threadId});
     });
 }
 
@@ -104,13 +99,13 @@ function error() {
 
 parentPort.on('message', (data) => {
     switch (data.cmd) {
-        case 'verify':
+        case 'do':
             verify(data.work, data.start, data.end);
             break;
         case 'stop':
-            if (proccessing && queue) {
+            if (queue) {
                 log('%d> Stopping queue', threadId);
-                proccessing = false;
+                queue.clear();
                 queue.done();
             }
             break;
