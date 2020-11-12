@@ -180,15 +180,22 @@ class FingerprintBridge {
                 if (op == this.FP_ENROLL) {
                     this.fingers = [];
                 }
+                let xstatus = null;
                 this.dp.startAcquire(op == this.FP_ENROLL ? true : false, (status, data) => {
                     switch (status) {
                     case 'disconnected':
-                        this.setStatus('Connect fingerprint reader', true);
-                        con.emit(op == this.FP_ENROLL ? 'enroll-status' : 'acquire-status', {status: status});
+                        if (xstatus != status) {
+                            xstatus = status;
+                            this.setStatus('Connect fingerprint reader', true);
+                            con.emit(op == this.FP_ENROLL ? 'enroll-status' : 'acquire-status', {status: status});
+                        }
                         break;
                     case 'connected':
-                        this.setStatus('Swipe your finger', true);
-                        con.emit(op == this.FP_ENROLL ? 'enroll-status' : 'acquire-status', {status: status});
+                        if (xstatus != status) {
+                            xstatus = status;
+                            this.setStatus('Swipe your finger', true);
+                            con.emit(op == this.FP_ENROLL ? 'enroll-status' : 'acquire-status', {status: status});
+                        }
                         break;
                     case 'error':
                         this.setStatus('Error occured, try again', true);
