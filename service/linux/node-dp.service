@@ -1,0 +1,11 @@
+[Unit]
+Description=Node Digital Persona Fingerprint Verifier 
+
+[Service]
+WorkingDirectory=/home/nodeapp/node-dp
+ExecStart=/usr/bin/node app.js --port=7978 --mode=verifier
+User=nodejs
+Group=nodejs
+
+[Install]
+WantedBy=multi-user.target
