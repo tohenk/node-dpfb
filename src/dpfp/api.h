@@ -29,6 +29,7 @@
 #include <queue>
 #include <stdlib.h>
 #ifdef __linux__
+#include <limits.h>
 #include <string.h>
 #include <unistd.h>
 #endif

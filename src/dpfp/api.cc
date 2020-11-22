@@ -94,7 +94,12 @@ static napi_value fp_select_reader(napi_env env, napi_callback_info info) {
     size_t argc = 1;
     napi_value argv[1];
     FP_API_DATA* api_data = NULL;
+#ifdef _WIN32
     char reader[MAX_PATH];
+#endif
+#ifdef __linux__
+    char reader[PATH_MAX];
+#endif
     size_t len;
 
     assert(napi_ok == napi_get_cb_info(env, info, &argc, argv, NULL, ((void**)&api_data)));
