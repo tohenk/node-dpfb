@@ -8,7 +8,7 @@ to be compatible across browsers. DPFB has two main functions, first as
 fingerprint acquisition to capture the fingerprint and send it to browser.
 The second part is to identify fingerprint sent by the browser.
 
-## How It Is Work
+## How Does It Work
 
 The workflow is described as follow:
 ```
@@ -126,6 +126,7 @@ npm run fpproxy
 
 ## Known Limitations
 
-* It is currently support Windows only.
+* It is currently support Windows and Linux only.
+* On Linux, only FP SERVER has been tested and works as intended.
 * When capturing fingerprint, DPFB app must have focused to be able receive
   captured data.
