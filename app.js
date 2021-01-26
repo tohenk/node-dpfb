@@ -91,7 +91,13 @@ class App {
             options = options || {};
             const port = this.config.port || 7879;
             const http = require('http').createServer();
-            const io = require('socket.io')(http);
+            const opts = {};
+            if (this.config.cors) {
+                opts.cors = this.config.cors;
+            } else {
+                opts.cors = {origin: '*'};
+            }
+            const io = require('socket.io')(http, opts);
             http.listen(port, () => {
                 const logdir = this.config.logdir || path.join(__dirname, 'logs');
                 if (!fs.existsSync(logdir)) fs.mkdirSync(logdir);
