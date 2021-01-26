@@ -39,80 +39,103 @@ const fs = require('fs');
 const Logger = require('./lib/logger');
 const FingerprintBridge = require('./bridge');
 
-let config = {};
-let configFile;
-// read configuration from command line values
-if (process.env.FP_CONFIG && fs.existsSync(process.env.FP_CONFIG)) {
-    configFile = process.env.FP_CONFIG;
-} else if (Cmd.get('config') && fs.existsSync(Cmd.get('config'))) {
-    configFile = Cmd.get('config');
-} else if (fs.existsSync(path.join(__dirname, 'config.json'))) {
-    configFile = path.join(__dirname, 'config.json');
-}
-if (configFile) {
-    console.log('Reading configuration %s', configFile);
-    config = JSON.parse(fs.readFileSync(configFile));
-}
-// check for default configuration
-if (!config.debug) {
-    config.debug = false;
-}
-if (Cmd.get('port')) {
-    config.port = Cmd.get('port');
-}
-if (Cmd.get('mode')) {
-    config.mode = Cmd.get('mode');
-}
-if (config.mode) {
-    switch (config.mode.toLowerCase()) {
-        case 'bridge':
-            config.mode = 1;
-            break;
-        case 'verifier':
-            config.mode = 2;
-            break;
-        case 'mixed':
-            config.mode = 3;
-            break;
+class App {
+
+    config = {}
+
+    constructor() {
+        this.initialize();
     }
+
+    initialize() {
+        let filename;
+        // read configuration from command line values
+        if (process.env.FP_CONFIG && fs.existsSync(process.env.FP_CONFIG)) {
+            filename = process.env.FP_CONFIG;
+        } else if (Cmd.get('config') && fs.existsSync(Cmd.get('config'))) {
+            filename = Cmd.get('config');
+        } else if (fs.existsSync(path.join(__dirname, 'config.json'))) {
+            filename = path.join(__dirname, 'config.json');
+        }
+        if (filename) {
+            console.log('Reading configuration %s', filename);
+            this.config = JSON.parse(fs.readFileSync(filename));
+        }
+        // check for default configuration
+        if (!this.config.debug) {
+            this.config.debug = false;
+        }
+        if (Cmd.get('port')) {
+            this.config.port = Cmd.get('port');
+        }
+        if (Cmd.get('mode')) {
+            this.config.mode = Cmd.get('mode');
+        }
+        if (this.config.mode) {
+            switch (this.config.mode.toLowerCase()) {
+                case 'bridge':
+                    this.config.mode = 1;
+                    break;
+                case 'verifier':
+                    this.config.mode = 2;
+                    break;
+                case 'mixed':
+                    this.config.mode = 3;
+                    break;
+            }
+        }
+    }
+
+    run(options) {
+        return new Promise((resolve, reject) => {
+            options = options || {};
+            const port = this.config.port || 7879;
+            const http = require('http').createServer();
+            const io = require('socket.io')(http);
+            http.listen(port, () => {
+                const logdir = this.config.logdir || path.join(__dirname, 'logs');
+                if (!fs.existsSync(logdir)) fs.mkdirSync(logdir);
+                const logfile = path.join(logdir, 'app.log');
+                const logger = new Logger(logfile);
+                const fp = new FingerprintBridge({
+                    socket: io,
+                    logger: logger,
+                    mode: this.config.mode || 1,
+                    proxies: this.config.proxies || [],
+                    onstatus: (status, priority) => {
+                        console.log('FP: %s', status);
+                        if (typeof options.onstatus == 'function') {
+                            options.onstatus(status, priority);
+                        }
+                    }
+                });
+                process.on('exit', (code) => {
+                    fp.finalize();
+                });
+                process.on('SIGTERM', () => {
+                    fp.finalize();
+                });
+                process.on('SIGINT', () => {
+                    process.exit();
+                });
+                console.log('%s ready on port %s...', options.title ? options.title : 'DPFP Verifier', port);
+                resolve(fp);
+            });
+        });
+    }
+
 }
 
-function startFingerprintBridge(options) {
-    return new Promise((resolve, reject) => {
-        options = options || {};
-        const port = config.port || 7879;
-        const http = require('http').createServer();
-        const io = require('socket.io')(http);
-        http.listen(port, () => {
-            const logdir = config.logdir || path.join(__dirname, 'logs');
-            if (!fs.existsSync(logdir)) fs.mkdirSync(logdir);
-            const logfile = path.join(logdir, 'app.log');
-            const logger = new Logger(logfile);
-            const fp = new FingerprintBridge({
-                socket: io,
-                logger: logger,
-                mode: config.mode || 1,
-                proxies: config.proxies || [],
-                onstatus: (status, priority) => {
-                    console.log('FP: %s', status);
-                    if (typeof options.onstatus == 'function') {
-                        options.onstatus(status, priority);
-                    }
-                }
-            });
-            process.on('exit', (code) => {
-                fp.finalize();
-            });
-            process.on('SIGTERM', () => {
-                fp.finalize();
-            });
-            process.on('SIGINT', () => {
-                process.exit();
-            });
-            console.log('%s ready on port %s...', options.title ? options.title : 'DPFP Verifier', port);
-            resolve(fp);
-        });
-    });
+const app = new App();
+
+function run(options) {
+    app.run(options);
+}
+
+if (require.main === module) {
+    run();
+} else {
+    module.exports = {config: app.config, run: run}
 }
 
 // usage help
@@ -125,10 +148,4 @@ function usage() {
     console.log(Cmd.dump());
     console.log('');
     return true;
-}
-
-if (require.main === module) {
-    startFingerprintBridge();
-} else {
-    module.exports = {config: config, run: startFingerprintBridge}
 }
