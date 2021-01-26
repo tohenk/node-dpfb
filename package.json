@@ -20,7 +20,8 @@
     "bindings": "^1.5.0",
     "jszip": "^3.5.0",
     "nan": "^2.14.2",
-    "socket.io": "^3.1.0"
+    "socket.io": "^3.1.0",
+    "socket.io-client": "^3.1.0"
   },
   "keywords": [
     "digital persona",
