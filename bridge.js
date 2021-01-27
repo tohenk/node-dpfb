@@ -52,7 +52,7 @@ class FingerprintBridge {
 
     init() {
         if (this.mode == this.MODE_BRIDGE || this.mode == this.MODE_MIXED) {
-            this.dp = require('./dpfp');
+            this.dp = require('@ntlab/dplib');
             this.dp.init();
             this.initialized = true;
         }

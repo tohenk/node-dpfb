@@ -26,7 +26,7 @@ const { parentPort, threadId } = require('worker_threads');
 const util  = require('util');
 const ntUtil = require('@ntlab/ntlib/util');
 const ntQueue = require('@ntlab/ntlib/queue');
-const dpfp = require('./dpfp');
+const dpfp = require('@ntlab/dplib');
 
 const identifyCount = dpfp.getIdentificationLen();
 let queue = null;

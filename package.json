@@ -1,5 +1,5 @@
 {
-  "name": "node-dp",
+  "name": "@ntlab/dpfb",
   "version": "2.0.0",
   "description": "Digital Persona Fingerprint Bridge, a fingerprint acquisition and identification in the browser environment",
   "productName": "Digital Persona Fingerprint Bridge",
@@ -14,15 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/tohenk/node-dp.git"
-  },
-  "dependencies": {
-    "@ntlab/ntlib": "^1.0.1",
-    "bindings": "^1.5.0",
-    "jszip": "^3.5.0",
-    "nan": "^2.14.2",
-    "socket.io": "^3.1.0",
-    "socket.io-client": "^3.1.0"
+    "url": "https://github.com/tohenk/node-dpfb.git"
   },
   "keywords": [
     "digital persona",
@@ -32,9 +24,21 @@
     "identify",
     "enroll"
   ],
+  "author": "Toha <tohenk@yahoo.com>",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tohenk/node-dpfb/issues"
+  },
+  "homepage": "https://github.com/tohenk/node-dpfb#readme",
+  "dependencies": {
+    "@ntlab/dplib": "^1.0.1",
+    "@ntlab/ntlib": "^1.0.1",
+    "jszip": "^3.5.0",
+    "socket.io": "^3.1.0",
+    "socket.io-client": "^3.1.0"
+  },
   "devDependencies": {
-    "electron": "^10.1.5",
+    "electron": "^10.3.0",
     "electron-packager": "^14.2.1",
     "electron-rebuild": "^1.11.0",
     "electron-winstaller": "^4.0.1"

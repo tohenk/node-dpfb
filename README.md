@@ -77,8 +77,8 @@ FP SERVER accepts commands described below.
 ### Building
 
 * Clone this repository.
-* Update sub module, issue `git submodule update --merge --remote -- lib`.
-* Build the bindings, issue `node-gyp rebuild`.
+* Update npm dependencies, issue `npm update`.
+* Build the bindings, issue `cd node_modules/@ntlab/dplib && node-gyp rebuild`.
 * Rebuild electron, issue `node_modules/.bin/electron-rebuild`.
 * Create package for distribution, issue `npm run package:win`, the package
   can be found in the `dist/Digital Persona Fingerprint Bridge-win32-ia32`
