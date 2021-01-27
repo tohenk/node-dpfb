@@ -24,7 +24,7 @@
 
 const util  = require('util');
 const JSZip = require('jszip');
-const ntUtil = require('./lib/util');
+const ntUtil = require('@ntlab/ntlib/util');
 
 class FingerprintBridge {
     VERSION = 'DPFPBRIDGE-1.0'

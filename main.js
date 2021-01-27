@@ -24,7 +24,7 @@
 
 const path = require('path');
 const myapp = require('./app');
-const {app, Menu, Tray, Notification} = require('electron');
+const { app, Menu, Tray, Notification } = require('electron');
 
 let trayIcon = null;
 

@@ -23,7 +23,7 @@
  */
 
 const path = require('path');
-const Cmd = require('./lib/cmd');
+const Cmd = require('@ntlab/ntlib/cmd');
 
 Cmd.addBool('help', 'h', 'Show program usage').setAccessible(false);
 Cmd.addVar('config', '', 'Read app configuration from file', 'config-file');
@@ -36,7 +36,7 @@ if (!Cmd.parse() || (Cmd.get('help') && usage())) {
 }
 
 const fs = require('fs');
-const Logger = require('./lib/logger');
+const Logger = require('@ntlab/ntlib/logger');
 const FingerprintBridge = require('./bridge');
 
 class App {

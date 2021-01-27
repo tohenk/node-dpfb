@@ -23,7 +23,7 @@
  */
 
 const crypto = require('crypto');
-const ntUtil = require('./lib/util');
+const ntUtil = require('@ntlab/ntlib/util');
 
 class FingerprintIdentifier {
     /**

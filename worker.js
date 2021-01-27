@@ -22,10 +22,10 @@
  * SOFTWARE.
  */
 
-const {parentPort, threadId} = require('worker_threads');
+const { parentPort, threadId } = require('worker_threads');
 const util  = require('util');
-const ntUtil = require('./lib/util');
-const ntQueue = require('./lib/queue');
+const ntUtil = require('@ntlab/ntlib/util');
+const ntQueue = require('@ntlab/ntlib/queue');
 const dpfp = require('./dpfp');
 
 const identifyCount = dpfp.getIdentificationLen();

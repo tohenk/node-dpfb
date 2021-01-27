@@ -24,8 +24,8 @@
 
 const os = require('os');
 const FingerprintIdentifier = require('./identifier');
-const {Worker} = require('worker_threads');
-const ntQueue = require('./lib/queue');
+const { Worker } = require('worker_threads');
+const ntQueue = require('@ntlab/ntlib/queue');
 
 class FingerprintIdentifierDP extends FingerprintIdentifier {
     constructor(options) {
