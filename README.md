@@ -74,20 +74,36 @@ FP SERVER accepts commands described below.
   to do so, type `npm install -g node-gyp`.
 * Digital Persona U.are.U SDK has been installed.
 
-### Building
+### Building Distribution Package
 
-* Clone this repository.
-* Update npm dependencies, issue `npm update`.
-* Build the bindings, issue `cd node_modules/@ntlab/dplib && node-gyp rebuild`.
-* Rebuild electron, issue `node_modules/.bin/electron-rebuild`.
-* Create package for distribution, issue `npm run package:win`, the package
-  can be found in the `dist/Digital Persona Fingerprint Bridge-win32-ia32`
-  directory along with its executable `Digital Persona Fingerprint Bridge.exe`.
+Before building, be sure the make dependencies are all up to date, issue `npm update` to do so.
+
+#### Building for 32-bit Windows Platform
+
+```
+npm run build:win32
+npm run package:win32
+```
+
+The package then can be found in the `dist/Digital Persona Fingerprint Bridge-win32-ia32`
+directory along with its executable `Digital Persona Fingerprint Bridge.exe`.
+
+#### Building for 64-bit Windows Platform
+
+```
+npm run build:win64
+npm run package:win64
+```
+
+The package then can be found in the `dist/Digital Persona Fingerprint Bridge-win32-x64`
+directory along with its executable `Digital Persona Fingerprint Bridge.exe`.
 
 ### Running FP BRIDGE
 
 Directly execute `Digital Persona Fingerprint Bridge.exe` from distribution
-package or issue `npm start` if using source or when developing.
+package or issue `npm start` if using source or when developing. When using
+`npm start` make sure to build the binding correctly according to the running
+operating system, either issue `npm run build:win32` or `npm run build:win64`.
 
 ### Running FP SERVER
 

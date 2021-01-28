@@ -10,7 +10,10 @@
     "fpproxy": "node app.js --port=7978 --mode=verifier --config=proxy.json",
     "fpworker1": "node app.js --port=8001 --mode=verifier",
     "fpworker2": "node app.js --port=8002 --mode=verifier",
-    "package:win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --out=dist --icon=assets/icons/app.ico"
+    "build:win32": "cd node_modules/@ntlab/dplib && node-gyp rebuild --arch=ia32 && electron-rebuild --arch=ia32",
+    "build:win64": "cd node_modules/@ntlab/dplib && node-gyp rebuild --arch=x64 && electron-rebuild --arch=x64",
+    "package:win32": "electron-packager . --overwrite --platform=win32 --arch=ia32 --out=dist --icon=assets/icons/app.ico",
+    "package:win64": "electron-packager . --overwrite --platform=win32 --arch=x64 --out=dist --icon=assets/icons/app.ico"
   },
   "repository": {
     "type": "git",
