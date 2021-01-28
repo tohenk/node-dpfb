@@ -2,7 +2,7 @@
 Description=Node Digital Persona Fingerprint Verifier 
 
 [Service]
-WorkingDirectory=/home/nodeapp/node-dp
+WorkingDirectory=/home/nodeapp/node-dpfb
 ExecStart=/usr/bin/node app.js --port=7978 --mode=verifier
 User=nodejs
 Group=nodejs
