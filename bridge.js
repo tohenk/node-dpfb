@@ -130,7 +130,7 @@ class FingerprintBridge {
                     this.getIdentifier().remove(data.id);
                 }
                 const success = this.getIdentifier().add(data.id, data.template);
-                this.log('Register template %d [%s]', data.id, success ? 'OK' : 'FAIL');
+                this.log('Register template %s [%s]', data.id, success ? 'OK' : 'FAIL');
                 con.emit('reg-template', {
                     id: data.id,
                     success: success
@@ -140,7 +140,7 @@ class FingerprintBridge {
         con.on('unreg-template', (data) => {
             if (data.id) {
                 const success = this.getIdentifier().remove(data.id);
-                this.log('Unregister template %d [%s]', data.id, success ? 'OK' : 'FAIL');
+                this.log('Unregister template %s [%s]', data.id, success ? 'OK' : 'FAIL');
                 con.emit('unreg-template', {
                     id: data.id,
                     success: success
