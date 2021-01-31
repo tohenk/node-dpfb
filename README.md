@@ -140,6 +140,10 @@ Running proxy server on port 7978
 npm run fpproxy
 ```
 
+## Live Demo
+
+Live demo is available [here](https://ntlab.id/demo/digital-persona-fingerprint-bridge).
+
 ## Known Limitations
 
 * It is currently support Windows and Linux only.
