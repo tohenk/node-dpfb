@@ -37,7 +37,7 @@
     "@ntlab/dplib": "^1.0.1",
     "@ntlab/ntlib": "^2.0.0",
     "jszip": "^3.10.1",
-    "socket.io": "^4.5.4",
+    "socket.io": "^4.6.1",
     "socket.io-client": "^4.5.4"
   },
   "devDependencies": {
