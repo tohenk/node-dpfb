@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2019-2020 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2023 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -22,27 +22,16 @@
  * SOFTWARE.
  */
 
-const FingerprintIdentifier = require('./identifier');
-const Worker = require('./proxyworker');
+const Channel = require('./index');
 
-class FingerprintIdentifierProxy extends FingerprintIdentifier {
-    constructor(options) {
-        super();
-        var options = options || {};
-        if (!options.proxies) {
-            throw new Error('Required proxies option must be set!');
-        }
-        if (typeof options.logger == 'function') {
-            this.logger = options.logger;
-        }
-        this.proxies = options.proxies;
-        this.workers = [];
-        this.init();
-    }
+class Proxy extends Channel {
 
     init() {
+        this.worker = this.options.worker;
+        this.proxies = this.options.proxies;
         this.proxies.forEach((url) => {
-            this.workers.push(new Worker({url: url, logger: this.logger}));
+            const Worker = require(this.worker);
+            this.workers.push(new Worker({serverid: this.options.serverid, url: url, logger: this.logger}));
         });
         this.next = 0;
     }
@@ -54,7 +43,7 @@ class FingerprintIdentifierProxy extends FingerprintIdentifier {
             }
         }
         this.workers[this.next].add(id, data);
-        if (++this.next == this.workers.length) {
+        if (++this.next === this.workers.length) {
             this.next = 0;
         }
         return true;
@@ -100,15 +89,15 @@ class FingerprintIdentifierProxy extends FingerprintIdentifier {
             let start = Date.now();
             let resolved = false;
             const workId = this.genId();
-            this.workers.forEach((worker) => {
+            this.workers.forEach(worker => {
                 if (worker.isConnected()) {
                     count++;
                     worker.identify(workId, feature)
-                        .then((response) => {
+                        .then(response => {
                             done++;
                             if (response.data) {
                                 // matched found or all has been done
-                                if ((response.data.matched != null || done == count) && !resolved) {
+                                if ((response.data.matched != null || done === count) && !resolved) {
                                     resolved = true;
                                     let finish = Date.now();
                                     this.log('Done in %d ms, match is %s for %s', finish - start,
@@ -117,7 +106,7 @@ class FingerprintIdentifierProxy extends FingerprintIdentifier {
                                     resolve(response);
                                 }
                             } else {
-                                if (done == count && !resolved) {
+                                if (done === count && !resolved) {
                                     resolve({ref: id, data: {matched: null}});
                                 }
                             }
@@ -126,11 +115,11 @@ class FingerprintIdentifierProxy extends FingerprintIdentifier {
                 }
             });
             // no worker, just assume as no matching found
-            if (count == 0) {
+            if (count === 0) {
                 resolve({ref: id, data: {matched: null}});
             }
         });
     }
 }
 
-module.exports = FingerprintIdentifierProxy;
+module.exports = Proxy;

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html class="w-100 h-100">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<style>
+body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+.w-100 {width: 100% !important;}
+.h-100 {height: 100% !important;}
+.m-0 {margin: 0;}
+.p-0 {padding: 0;}
+.log {font-size: smaller;}
+</style>
+</head>
+<body>
+<pre class="log m-0"></pre>
+<script>
+const html = document.querySelector('html');
+const log = document.querySelector('.log');
+if (log) {
+    const focusTo = () => {
+        const delta = log.clientHeight - html.clientHeight;
+        if (delta > 0) {
+            console.log(delta);
+            html.scrollTop = delta;
+        }
+    }
+    const getLogs = () => {
+        window.electronAPI.invoke('get-logs', data => {
+            if (data.logs) {
+                log.innerHTML = data.logs.join('\n');
+                focusTo();
+            }
+        });
+    }
+    window.electronAPI.listen('log', message => {
+        if (log.innerHTML.length) {
+            log.innerHTML += '<br>';
+        }
+        log.innerHTML += message;
+        focusTo();
+    });
+    window.addEventListener('DOMContentLoaded', e => {
+        window.electronAPI.invoke('state', data => {
+            if (data.ready) {
+                getLogs();
+            } else {
+                window.electronAPI.listen('ready', data => {
+                    getLogs();
+                });
+            }
+        });
+    });
+}
+</script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2019-2020 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2023 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -22,89 +22,96 @@
  * SOFTWARE.
  */
 
-const { parentPort, threadId } = require('worker_threads');
-const util  = require('util');
-const ntUtil = require('@ntlab/ntlib/util');
-const ntQueue = require('@ntlab/ntlib/queue');
+const IPC = require('./index');
+const util = require('util');
+const Queue = require('@ntlab/work/queue');
 const dpfp = require('@ntlab/dplib');
+const debug = require('debug')('identity:worker:fingerprint');
 
 const identifyCount = dpfp.getIdentificationLen();
 let queue = null;
+let stop = false;
 
 function verify(work, start, end) {
+    log('FP> [%d] Verifying %s from %d to %d', IPC.id, work.id, start, end);
+    const fps = [];
     let count = 0;
     let matched = null;
-    log('%d> Verifying %s from %d to %d', threadId, work.id, start, end);
-    let fps = [];
     let current = start;
-    while (current <= end) {
-        let data = {
+    while (current <= end && !stop) {
+        const data = {
             start: current,
             fmds: []
-        };
+        }
         for (let i = 0; i < identifyCount; i++) {
             if (current + i > end) {
                 break;
             }
-            data.fmds.push(work.fingers[current + i]);
+            data.fmds.push(work.items[current + i]);
         }
         fps.push(data);
         current += identifyCount;
     }
-    queue = new ntQueue(fps, (d) => {
+    const errNext = err => {
+        error('FP> [%d] Err: %s', IPC.id, err);
+        if (queue) {
+            queue.next();
+        }
+    }
+    queue = new Queue(fps, d => {
         try {
             count += d.fmds.length;
             dpfp.identify(work.feature, d.fmds)
-                .then((idx) => {
+                .then(idx => {
                     if (idx >= 0) {
-                        log('%d> Found matched at %d', threadId, d.start + idx);
+                        log('FP> [%d] Found matched at %d', IPC.id, d.start + idx);
                         matched = d.start + idx;
                         queue.done();
-                    } else {
+                    } else if (queue) {
                         queue.next();
                     }
                 })
-                .catch((err) => {
-                    error('%d> %d - %s', threadId, d.start, err);
-                    queue.next();
-                })
+                .catch(err => errNext(err))
             ;
         }
         catch (err) {
-            error('%d> %d - %s', threadId, d.start, err);
-            queue.next();
+            errNext(err);
         }
     });
     queue.once('done', () => {
-        log('%d> Done verifying %d sample(s)', threadId, count);
-        parentPort.postMessage({cmd: 'done', work: work, matched: matched, worker: threadId});
+        queue = null;
+        log('FP> [%d] Done verifying %d sample(s)', IPC.id, count);
+        IPC.send({cmd: 'done', work: work, matched: matched, worker: IPC.id});
     });
 }
 
 function fmt(args) {
     if (Array.isArray(args) && args.length) {
         const time = new Date();
-        args[0] = ntUtil.formatDate(time, 'dd-MM HH:mm:ss.zzz') + ' ' + args[0];
+        const u = require('@ntlab/ntlib/util');
+        args[0] = u.formatDate(time, 'dd-MM HH:mm:ss.zzz') + ' ' + args[0];
         return util.format.apply(null, args);
     }
 }
 
 function log() {
-    console.log(fmt(Array.from(arguments)));
+    debug(fmt(Array.from(arguments)));
 }
 
 function error() {
     console.error(fmt(Array.from(arguments)));
 }
 
-parentPort.on('message', (data) => {
+IPC.on('message', (data) => {
     switch (data.cmd) {
         case 'do':
+            stop = false;
             verify(data.work, data.start, data.end);
             break;
         case 'stop':
+            stop = true;
             if (queue) {
-                log('%d> Stopping queue', threadId);
+                log('FP> [%d] Stopping queue', IPC.id);
                 queue.clear();
                 queue.done();
             }

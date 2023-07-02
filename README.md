@@ -82,7 +82,7 @@ Before building, be sure the make dependencies are all up to date, issue `npm up
 
 ```
 npm run build:win32
-npm run package:win32
+npm run make:win32
 ```
 
 The package then can be found in the `dist/Digital Persona Fingerprint Bridge-win32-ia32`
@@ -92,7 +92,7 @@ directory along with its executable `Digital Persona Fingerprint Bridge.exe`.
 
 ```
 npm run build:win64
-npm run package:win64
+npm run make:win64
 ```
 
 The package then can be found in the `dist/Digital Persona Fingerprint Bridge-win32-x64`
@@ -104,41 +104,6 @@ Directly execute `Digital Persona Fingerprint Bridge.exe` from distribution
 package or issue `npm start` if using source or when developing. When using
 `npm start` make sure to build the binding correctly according to the running
 operating system, either issue `npm run build:win32` or `npm run build:win64`.
-
-### Running FP SERVER
-
-The FP SERVER can be deployed in stand alone mode, which it directly identifies
-fingerprint using the SDK. The other option is to act as proxy which queries
-another stand alone FP SERVER located anywhere.
-
-FP SERVER configurations is mainly located in the `package.json` under the
-scripts section. Also there is `proxy.json` configuration for proxy mode.
-
-#### Running as stand alone server on port 7978
-
-```
-npm run fpserver
-```
-
-#### Running as proxy server on port 7978
-
-Running proxy worker on port 8001
-
-```
-npm run fpworker1
-```
-
-Running proxy worker on port 8002
-
-```
-npm run fpworker2
-```
-
-Running proxy server on port 7978
-
-```
-npm run fpproxy
-```
 
 ## Live Demo
 

@@ -1,0 +1,54 @@
+{
+  "name": "@ntlab/dpfb",
+  "version": "3.0.0",
+  "description": "A fingerprint acquisition and identification in the browser environment",
+  "productName": "Digital Persona Fingerprint Bridge",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "build:win32": "cd node_modules/@ntlab/dplib && node-gyp rebuild --arch=ia32 && electron-rebuild --arch=ia32",
+    "build:win64": "cd node_modules/@ntlab/dplib && node-gyp rebuild --arch=x64 && electron-rebuild --arch=x64",
+    "package": "electron-forge package",
+    "package:win32": "electron-forge package --platform=win32 --arch=ia32",
+    "package:win64": "electron-forge package --platform=win32 --arch=x64",
+    "make": "electron-forge make",
+    "make:win32": "electron-forge make --platform=win32 --arch=ia32",
+    "make:win64": "electron-forge make --platform=win32 --arch=x64"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tohenk/node-dpfb.git"
+  },
+  "keywords": [
+    "digital persona",
+    "fingerprint",
+    "match",
+    "verify",
+    "identify",
+    "enroll"
+  ],
+  "author": "Toha <tohenk@yahoo.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tohenk/node-dpfb/issues"
+  },
+  "homepage": "https://github.com/tohenk/node-dpfb#readme",
+  "dependencies": {
+    "@ntlab/dplib": "^1.0.4",
+    "@ntlab/ntlib": "^2.0.5",
+    "@ntlab/work": "^1.1.2",
+    "electron-squirrel-startup": "^1.0.0",
+    "jszip": "^3.10.1",
+    "socket.io": "^4.7.1"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.2.1",
+    "@electron-forge/maker-deb": "^6.2.1",
+    "@electron-forge/maker-rpm": "^6.2.1",
+    "@electron-forge/maker-squirrel": "^6.2.1",
+    "@electron-forge/maker-zip": "^6.2.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^6.2.1",
+    "@electron/rebuild": "^3.2.10",
+    "electron": "^25.2.0"
+  }
+}

@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2023 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -22,59 +22,87 @@
  * SOFTWARE.
  */
 
-const crypto = require('crypto');
-const ntUtil = require('@ntlab/ntlib/util');
+class Channel {
 
-class FingerprintIdentifier {
     /**
-     * Register fingerprint template.
+     * Constructor.
      *
-     * @param {number} id Fingerprint id
-     * @param {string} data Fingerprint data
-     * @returns {boolean} Wheter fingerprint successfully registered or not
+     * @param {object} options
+     */
+    constructor(options) {
+        this.options = options || {};
+        if (typeof this.options.logger === 'function') {
+            this.logger = this.options.logger;
+        }
+        this.templates = new Map();
+        this.init();
+    }
+
+    init() {
+    }
+
+    /**
+     * Register identity template.
+     *
+     * @param {number} id Identity id
+     * @param {string} data Identity data
+     * @returns {boolean} Wheter identity successfully registered or not
      */
     add(id, data) {
         throw new TypeError('Not implemented');
     }
 
     /**
-     * Deregister fingerprint template.
+     * Deregister identity template.
      *
-     * @param {number} id Fingerprint id
-     * @returns {boolean} Wheter fingerprint successfully deregistered or not
+     * @param {number} id Identity id
+     * @returns {boolean} Wheter identity successfully deregistered or not
      */
     remove(id) {
         throw new TypeError('Not implemented');
     }
 
     /**
-     * Check if fingerprint is already registered.
+     * Check if identity is already registered.
      *
-     * @param {number} id Fingerprint id
-     * @returns {boolean} Returns true if fingerprint was registered, false otherwise
+     * @param {number} id Identity id
+     * @returns {boolean} Returns true if identity was registered, false otherwise
      */
     has(id) {
         throw new TypeError('Not implemented');
     }
 
     /**
-     * Get the number of registered fingerprints.
+     * Get the number of registered identities.
      *
-     * @returns {number} The number of registered fingerprints
+     * @returns {number} The number of registered identities
      */
     count() {
         throw new TypeError('Not implemented');
     }
 
     /**
-     * Remove all registered fingerprints.
+     * Remove all registered identities.
      */
     clear() {
         throw new TypeError('Not implemented');
     }
 
     /**
-     * Perform fingerprint identifying and the get matched fingerprint.
+     * Normalize template data.
+     *
+     * @param {any} data 
+     * @returns {any}
+     */
+    normalize(data) {
+        if (typeof this.options.normalize === 'function') {
+            return this.options.normalize(data);
+        }
+        return data;
+    }
+
+    /**
+     * Perform identification and the get matched identity.
      * 
      * The returned promise will have signature of:
      *
@@ -86,7 +114,7 @@ class FingerprintIdentifier {
      * }
      *
      * @param {string} id Identify sequence id
-     * @param {string} feature Fingerprint feature template
+     * @param {string} feature Identity feature template
      * @returns {Promise}
      */
     identify(id, feature) {
@@ -100,10 +128,10 @@ class FingerprintIdentifier {
      */
     log() {
         const args = Array.from(arguments);
-        if (typeof this.logger == 'function') {
-            this.logger.apply(null, args);
+        if (typeof this.logger === 'function') {
+            this.logger(...args);
         } else {
-            console.log.apply(null, args);
+            console.log(...args);
         }
     }
 
@@ -113,10 +141,12 @@ class FingerprintIdentifier {
      * @returns {string}
      */
     genId() {
+        const crypto = require('crypto');
+        const u = require('@ntlab/ntlib/util');
         const shasum = crypto.createHash('sha1');
-        shasum.update(ntUtil.formatDate(new Date(), 'yyyyMMddHHmmsszzz') + (Math.random() * 1000000).toString());
+        shasum.update(u.formatDate(new Date(), 'yyyyMMddHHmmsszzz') + (Math.random() * 1000000).toString());
         return shasum.digest('hex').substr(0, 8);
     }
 }
 
-module.exports = FingerprintIdentifier;
+module.exports = Channel;

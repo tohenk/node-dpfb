@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2023 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -22,27 +22,18 @@
  * SOFTWARE.
  */
 
-const FingerprintIdentifier = require('./identifier');
+const Channel = require('../channel');
 const io = require('socket.io-client');
 
-class ProxyWorker extends FingerprintIdentifier {
-    constructor(options) {
-        super();
-        var options = options || {};
-        if (!options.url) {
-            throw new Error('Required url option must be set!');
-        }
-        if (typeof options.logger == 'function') {
-            this.logger = options.logger;
-        }
-        this.url = options.url;
-        this.connected = false;
-        this.templates = new Map();
-        this.removes = [];
-        this.init();
-    }
+class ProxyWorker extends Channel {
 
     init() {
+        if (!this.options.url) {
+            throw new Error('Required url option must be set!');
+        }
+        this.url = this.options.url;
+        this.removes = [];
+        this.connected = false;
         this.socket = io.connect(this.url, {reconnect: true});
         this.socket.on('connect', () => {
             this.log('Connected to %s', this.url);
@@ -52,15 +43,17 @@ class ProxyWorker extends FingerprintIdentifier {
             this.connected = false;
             this.log('Disconnected from %s', this.url);
         });
-        this.socket.on('self-test', (response) => {
+        this.socket.on('self-test', response => {
             if (response) {
                 let svrName = response.substr(0, response.indexOf('-'));
                 let svrVer = response.substr(response.indexOf('-') + 1);
-                if (svrName == 'DPFPBRIDGE') {
+                if (svrName === this.options.serverid) {
                     this.log('Proxy connection ready');
                     this.connected = true;
                     this.server = {name: svrName, protocol: svrVer};
                     this.syncTemplates();
+                } else {
+                    this.log('Unexpected server, required %s got %s', this.options.serverid ? this.options.serverid : 'NONE', response);
                 }
             }
         });
@@ -73,7 +66,7 @@ class ProxyWorker extends FingerprintIdentifier {
     syncTemplates(id) {
         if (this.connected) {
             this.templates.forEach((value, key) => {
-                if (id == undefined || id == key) {
+                if (id === undefined || id === key) {
                     this.socket.emit('reg-template', {id: key, template: value});
                 }
             });
@@ -126,9 +119,9 @@ class ProxyWorker extends FingerprintIdentifier {
             if (this.connected) {
                 this.socket.emit('identify', {feature: feature, workid: id});
                 const f = () => {
-                    this.socket.once('identify', (response) => {
+                    this.socket.once('identify', response => {
                         // ensure response is for our
-                        if (response.ref == id) {
+                        if (response.ref === id) {
                             this.log('Got identify response with %s from %s', JSON.stringify(response), this.url);
                             resolve(response);
                         } else {
