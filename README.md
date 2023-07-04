@@ -19,8 +19,6 @@ The workflow is described as follow:
 Both FP BRIDGE and FP SERVER heavily utilize [socket.io](https://socket.io)
 for its communication.
 
-### FP BRIDGE
-
 FP BRIDGE is a socket.io server while the BROWSER is a client. Normally it is
 listening at port `7879`. FP BRIDGE accepts commands described below.
 
@@ -45,27 +43,6 @@ listening at port `7879`. FP BRIDGE accepts commands described below.
 
 * `stop`, stop fingerprint acquisition or enrollment.
 
-### FP SERVER
-
-FP SERVER is a socket.io server. Normally it is listening at port `7978`.
-FP SERVER accepts commands described below.
-
-* `count-template`, it returns same event with an object contains `count`
-  property.
-* `reg-template`, pass an object with `id` and `template` property as argument.
-  It returns same event with an object contains `id` and `success` property.
-* `unreg-template`, pass an object with `id` property as argument.
-  It returns same event with an object contains `id` and `success` property.
-* `has-template`, pass an object with `id` property as argument to check if
-  template has been registered. It returns same event with an object contains
-  `id` and `exist` property.
-* `clear-template`, clear all registered fingerprint templates.
-* `identify`, pass an object with `feature` and `workid` property as argument
-  to identify the feature against registered fingerprint templates.
-  It returns same event with an object contains `ref` (work id), `id` (internal
-  id of identification process), and `data` property. To check successfull
-  operation of identification, examine `matched` property of `data`.
-
 ## Usage
 
 ### Requirements
@@ -85,7 +62,7 @@ npm run build:win32
 npm run make:win32
 ```
 
-The package then can be found in the `dist/Digital Persona Fingerprint Bridge-win32-ia32`
+The package then can be found in the `app/out/Digital Persona Fingerprint Bridge-win32-ia32`
 directory along with its executable `Digital Persona Fingerprint Bridge.exe`.
 
 #### Building for 64-bit Windows Platform
@@ -95,7 +72,7 @@ npm run build:win64
 npm run make:win64
 ```
 
-The package then can be found in the `dist/Digital Persona Fingerprint Bridge-win32-x64`
+The package then can be found in the `app/out/Digital Persona Fingerprint Bridge-win32-x64`
 directory along with its executable `Digital Persona Fingerprint Bridge.exe`.
 
 ### Running FP BRIDGE

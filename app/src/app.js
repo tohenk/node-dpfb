@@ -26,8 +26,8 @@ const fs = require('fs');
 const path = require('path');
 const Stringify = require('@ntlab/ntlib/stringify');
 const Work = require('@ntlab/work/work');
-const SocketBackend = require('./identity/backend/socket');
-const FingerprintId = require('./identity/fingerprint');
+const { Identity, Socket } = require('@ntlab/identity');
+const FingerprintId = require('@ntlab/identity-fingerprint');
 const { ipcMain } = require('electron');
 const debug = require('debug')('app:core');
 
@@ -101,7 +101,8 @@ class App {
     createFpServer() {
         return new Promise((resolve, reject) => {
             const options = {
-                backend: new SocketBackend({http: this.http}),
+                mode: Identity.MODE_BRIDGE,
+                backend: new Socket({http: this.http}),
                 logger: message => this.addLog(message),
             }
             this.fp = new FingerprintId(options);
