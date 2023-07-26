@@ -35,7 +35,7 @@ if (!Cmd.parse() || (Cmd.get('help') && usage())) {
 const fs = require('fs');
 const path = require('path');
 const Work = require('@ntlab/work/work');
-const { app, ipcMain, BrowserWindow, Menu, Tray } = require('electron');
+const { app, dialog, ipcMain, BrowserWindow, Menu, Tray } = require('electron');
 
 class MainApp
 {
@@ -104,17 +104,8 @@ class MainApp
     getTrayMenu() {
         return  Menu.buildFromTemplate([
             {
-                id: 'ctx-app-name',
-                label: app.getName()
-            },
-            {
-                id: 'ctx-separator-1',
-                label: '-',
-                type: 'separator'
-            },
-            {
-                id: 'ctx-view-log',
-                label: 'Logs',
+                id: 'ctx-show-main',
+                label: app.getName(),
                 click: () => {
                     if (!this.win.isVisible()) {
                         this.win.show();
@@ -122,7 +113,7 @@ class MainApp
                 }
             },
             {
-                id: 'ctx-separator-2',
+                id: 'ctx-separator-1',
                 label: '-',
                 type: 'separator'
             },
@@ -230,7 +221,12 @@ class MainApp
 
     handleEvents() {
         app.whenReady().then(() => {
-            this.startApp();
+            if (!app.requestSingleInstanceLock()) {
+                dialog.showMessageBoxSync({title: 'Error', message: `${app.getName()} already running!`, type: 'error'});
+                app.quit();
+            } else {
+                this.startApp();
+            }
         });
         app
             .on('window-all-closed', () => {

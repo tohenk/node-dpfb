@@ -92,7 +92,6 @@ class App {
             this.http = createServer();
             const port = this.config.port || 7879;
             this.http.listen(port, () => {
-                this.addLog(`Server ready at port ${port}...`);
                 resolve();
             });
         });
@@ -103,6 +102,7 @@ class App {
             const options = {
                 mode: Identity.MODE_BRIDGE,
                 backend: new Socket({http: this.http}),
+                prefix: 'fp',
                 logger: message => this.addLog(message),
             }
             this.fp = new FingerprintId(options);
