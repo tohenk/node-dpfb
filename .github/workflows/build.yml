@@ -1,0 +1,36 @@
+name: Build releases
+
+on:
+  push:
+    tags: [ "*" ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+        arch: [ia32, x64]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+    - name: Install dependencies
+      run: cd app && npm install --arch=${{ matrix.arch }}
+    - name: Make release
+      run: cd app && npm run make:${{ matrix.arch == 'ia32' && '32' || '64' }}
+    - name: Upload release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: app/out/make/**/*.zip
+        tag: ${{ github.ref }}
+        overwrite: true
+        file_glob: true

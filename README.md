@@ -22,26 +22,26 @@ for its communication.
 FP BRIDGE is a socket.io server while the BROWSER is a client. Normally it is
 listening at port `7879`. FP BRIDGE accepts commands described below.
 
-* `required-features`, it will return the numbers of fingerprints needed
+* `fp-required-features`, it will return the numbers of fingerprints needed
   for enrollment.
-* `set-options`, set the options, pass an options object with:
+* `fp-set-options`, set the options, pass an options object with:
 
   * `enrollWithSamples` to include fingerprint samples when enrolling.
 
-* `acquire`, start fingerprint acquisition for identification.
+* `fp-acquire`, start fingerprint acquisition for identification.
 
   Listen for the following events when capturing:
-  * `acquire-status` which contains the capture status.
-  * `acquire-complete` which contains the fingerprint data.
+  * `fp-acquire-status` which contains the capture status.
+  * `fp-acquire-complete` which contains the fingerprint data.
 
-* `enroll`, start fingerprint enrollment.
+* `fp-enroll`, start fingerprint enrollment.
 
   Listen for the following events when enrolling:
-  * `enroll-status` which contains the capture status.
-  * `enroll-complete` which contains the fingerprint data.
-  * `enroll-finished` which contains the zipped fingerprint datas.
+  * `fp-enroll-status` which contains the capture status.
+  * `fp-enroll-complete` which contains the fingerprint data.
+  * `fp-enroll-finished` which contains the zipped fingerprint datas.
 
-* `stop`, stop fingerprint acquisition or enrollment.
+* `fp-stop`, stop fingerprint acquisition or enrollment.
 
 ## Usage
 
@@ -58,29 +58,27 @@ Before building, be sure the make dependencies are all up to date, issue `npm up
 #### Building for 32-bit Windows Platform
 
 ```
-npm run build:win32
-npm run make:win32
+npm run build:32
+npm run make:32
 ```
 
-The package then can be found in the `app/out/Digital Persona Fingerprint Bridge-win32-ia32`
-directory along with its executable `Digital Persona Fingerprint Bridge.exe`.
+The package then can be found in the `app/out/make` folder.
 
 #### Building for 64-bit Windows Platform
 
 ```
-npm run build:win64
-npm run make:win64
+npm run build:64
+npm run make:64
 ```
 
-The package then can be found in the `app/out/Digital Persona Fingerprint Bridge-win32-x64`
-directory along with its executable `Digital Persona Fingerprint Bridge.exe`.
+The package then can be found in the `app/out/make` folder.
 
 ### Running FP BRIDGE
 
 Directly execute `Digital Persona Fingerprint Bridge.exe` from distribution
 package or issue `npm start` if using source or when developing. When using
 `npm start` make sure to build the binding correctly according to the running
-operating system, either issue `npm run build:win32` or `npm run build:win64`.
+operating system, either issue `npm run build:32` or `npm run build:64`.
 
 ## Live Demo
 

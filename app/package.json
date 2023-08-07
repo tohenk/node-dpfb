@@ -1,20 +1,20 @@
 {
   "name": "@ntlab/dpfb",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "A fingerprint acquisition and identification in the browser environment",
   "productName": "Digital Persona Fingerprint Bridge",
   "main": "main.js",
   "scripts": {
     "start": "electron-forge start",
-    "build": "cd node_modules/@ntlab/dplib && node-gyp rebuild && electron-rebuild",
-    "build:win32": "cd node_modules/@ntlab/dplib && node-gyp rebuild --arch=ia32 && electron-rebuild --arch=ia32",
-    "build:win64": "cd node_modules/@ntlab/dplib && node-gyp rebuild --arch=x64 && electron-rebuild --arch=x64",
+    "build": "cd node_modules/@ntlab/dplib && npm run install",
+    "build:32": "cd node_modules/@ntlab/dplib && npm run install:32",
+    "build:64": "cd node_modules/@ntlab/dplib && npm run install:64",
     "package": "electron-forge package",
-    "package:win32": "electron-forge package --platform=win32 --arch=ia32",
-    "package:win64": "electron-forge package --platform=win32 --arch=x64",
+    "package:32": "electron-forge package --arch=ia32",
+    "package:64": "electron-forge package --arch=x64",
     "make": "electron-forge make",
-    "make:win32": "electron-forge make --platform=win32 --arch=ia32",
-    "make:win64": "electron-forge make --platform=win32 --arch=x64"
+    "make:32": "electron-forge make --arch=ia32",
+    "make:64": "electron-forge make --arch=x64"
   },
   "repository": {
     "type": "git",
@@ -40,7 +40,7 @@
     "@ntlab/work": "^1.1.3",
     "electron-squirrel-startup": "^1.0.0",
     "jszip": "^3.10.1",
-    "socket.io": "^4.7.1"
+    "socket.io": "^4.7.2"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.2.1",
@@ -50,6 +50,6 @@
     "@electron-forge/maker-zip": "^6.2.1",
     "@electron-forge/plugin-auto-unpack-natives": "^6.2.1",
     "@electron/rebuild": "^3.2.10",
-    "electron": "^25.3.1"
+    "electron": "^25.4.0"
   }
 }
