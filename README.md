@@ -2,11 +2,9 @@
 
 ## Introduction
 
-Digital Persona Fingerprint Bridge (DPFB) aims to provide fingerprint
-acquisition and identification in the browser environment. It is designed
-to be compatible across browsers. DPFB has two main functions, first as
-fingerprint acquisition to capture the fingerprint and send it to browser.
-The second part is to identify fingerprint sent by the browser.
+Digital Persona Fingerprint Bridge (DPFB) aims to provide fingerprint acquisition
+in the browser environment. It is designed to be compatible across browsers. For
+identification purpose on server side, use a backend like [Identity Authenticator](https://github.com/tohenk/node-identity-authenticator).
 
 ## How Does It Work
 
@@ -86,7 +84,6 @@ Live demo is available [here](https://ntlab.id/demo/digital-persona-fingerprint-
 
 ## Known Limitations
 
-* It is currently support Windows and Linux only.
-* On Linux, only FP SERVER has been tested and works as intended.
+* It is currently support Windows only.
 * When capturing fingerprint, DPFB app must have focused to be able receive
   captured data.
