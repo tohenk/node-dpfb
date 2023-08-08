@@ -1,6 +1,6 @@
 {
   "name": "@ntlab/dpfb",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "A fingerprint acquisition and identification in the browser environment",
   "productName": "Digital Persona Fingerprint Bridge",
   "main": "main.js",
