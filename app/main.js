@@ -28,7 +28,7 @@ Cmd.addBool('help', 'h', 'Show program usage').setAccessible(false);
 Cmd.addVar('config', '', 'Read app configuration from file', 'config-file');
 Cmd.addVar('port', 'p', 'Set web server port to listen', 'port');
 
-if (!Cmd.parse() || (Cmd.get('help') && usage())) {
+if (require('./squirrel-event') || !Cmd.parse() || (Cmd.get('help') && usage())) {
     process.exit();
 }
 

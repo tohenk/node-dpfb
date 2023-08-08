@@ -33,8 +33,12 @@ module.exports = {
     rebuildConfig: {},
     makers: [
         {
-            name: '@electron-forge/maker-zip',
-            platforms: ['win32', 'darwin', 'linux'],
+            name: '@electron-forge/maker-squirrel',
+            config: {
+                name: 'DPFB',
+                iconUrl: 'https://raw.githubusercontent.com/tohenk/node-dpfb/master/app/assets/icons/app.ico',
+                setupIcon: path.join(__dirname, 'assets', 'icons', 'app.ico'),
+            }
         }
     ],
     plugins: [
@@ -49,9 +53,11 @@ module.exports = {
                 if (Array.isArray(result.artifacts)) {
                     result.artifacts.forEach(artifact => {
                         const artifactName = path.basename(artifact);
-                        const artifactSafename = artifactName.replace(/\s/g, '.');
-                        if (artifactName !== artifactSafename) {
-                            fs.renameSync(artifact, path.join(path.dirname(artifact), artifactSafename));
+                        if (artifactName.match(/\.exe$/)) {
+                            const artifactSafename = artifactName.replace(result.packageJSON.productName, `${result.packageJSON.productName}-${result.platform}-${result.arch}`).replace(/\s/g, '-');
+                            if (artifactName !== artifactSafename) {
+                                fs.renameSync(artifact, path.join(path.dirname(artifact), artifactSafename));
+                            }
                         }
                     });
                 }
