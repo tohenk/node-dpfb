@@ -39,6 +39,10 @@ module.exports = {
                 iconUrl: 'https://raw.githubusercontent.com/tohenk/node-dpfb/master/app/assets/icons/app.ico',
                 setupIcon: path.join(__dirname, 'assets', 'icons', 'app.ico'),
             }
+        },
+        {
+            name: '@electron-forge/maker-zip',
+            platforms: ['win32', 'darwin', 'linux'],
         }
     ],
     plugins: [
@@ -53,7 +57,7 @@ module.exports = {
                 if (Array.isArray(result.artifacts)) {
                     result.artifacts.forEach(artifact => {
                         const artifactName = path.basename(artifact);
-                        if (artifactName.match(/\.exe$/)) {
+                        if (artifactName.match(/\.(exe|zip)$/)) {
                             const artifactSafename = artifactName.replace(result.packageJSON.productName, `${result.packageJSON.productName}-${result.platform}-${result.arch}`).replace(/\s/g, '-');
                             if (artifactName !== artifactSafename) {
                                 fs.renameSync(artifact, path.join(path.dirname(artifact), artifactSafename));
