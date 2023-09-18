@@ -49,6 +49,6 @@
     "@electron-forge/maker-zip": "^6.4.1",
     "@electron-forge/plugin-auto-unpack-natives": "^6.4.1",
     "@electron/rebuild": "^3.2.13",
-    "electron": "^22.3.21"
+    "electron": "^22.3.24"
   }
 }
