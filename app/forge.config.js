@@ -58,7 +58,11 @@ module.exports = {
                     result.artifacts.forEach(artifact => {
                         const artifactName = path.basename(artifact);
                         if (artifactName.match(/\.(exe|zip)$/)) {
-                            const artifactSafename = artifactName.replace(result.packageJSON.productName, `${result.packageJSON.productName}-${result.platform}-${result.arch}`).replace(/\s/g, '-');
+                            let artifactSafename = artifactName.replace(/\s/g, '-');
+                            const artifactNameWithPlatformArch = `${result.packageJSON.productName}-${result.platform}-${result.arch}`;
+                            if (artifactSafename.indexOf(artifactNameWithPlatformArch) < 0) {
+                                artifactSafename = artifactSafename.replace(result.packageJSON.productName, artifactNameWithPlatformArch);
+                            }
                             if (artifactName !== artifactSafename) {
                                 fs.renameSync(artifact, path.join(path.dirname(artifact), artifactSafename));
                             }
