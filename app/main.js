@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+const path = require('path');
 const Cmd = require('@ntlab/ntlib/cmd');
 
 Cmd.addBool('help', 'h', 'Show program usage').setAccessible(false);
@@ -33,7 +34,6 @@ if (require('./squirrel-event') || !Cmd.parse() || (Cmd.get('help') && usage()))
 }
 
 const fs = require('fs');
-const path = require('path');
 const Work = require('@ntlab/work/work');
 const { app, dialog, ipcMain, BrowserWindow, Menu, Tray } = require('electron');
 
