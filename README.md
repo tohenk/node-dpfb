@@ -80,7 +80,7 @@ operating system, either issue `npm run build:32` or `npm run build:64`.
 
 ## Live Demo
 
-Live demo is available [here](https://ntlab.id/demo/digital-persona-fingerprint-bridge).
+Live demo is available [here](https://apps.ntlab.id/demo/digital-persona-fingerprint-bridge).
 
 ## Known Limitations
 
