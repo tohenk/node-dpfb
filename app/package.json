@@ -39,7 +39,7 @@
     "@ntlab/ntlib": "^2.0.5",
     "@ntlab/work": "^1.1.5",
     "jszip": "^3.10.1",
-    "socket.io": "^4.7.5"
+    "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.3.1",
