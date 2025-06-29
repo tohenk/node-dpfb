@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2023 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2023-2025 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -55,14 +55,18 @@ module.exports = {
         postMake: async (forgeConfig, results) => {
             results.forEach(result => {
                 if (Array.isArray(result.artifacts)) {
+                    const productName = result.packageJSON.productName.replace(/\s/g, '-');
+                    const platform = result.platform;
+                    const arch = result.arch === 'ia32' ? 'x86' : result.arch;
                     result.artifacts.forEach(artifact => {
                         const artifactName = path.basename(artifact);
                         if (artifactName.match(/\.(exe|zip)$/)) {
                             let artifactSafename = artifactName.replace(/\s/g, '-');
-                            const product = result.packageJSON.productName.replace(/\s/g, '-');
-                            const artifactNameWithPlatformArch = `${product}-${result.platform}-${result.arch}`;
-                            if (artifactSafename.indexOf(artifactNameWithPlatformArch) < 0) {
-                                artifactSafename = artifactSafename.replace(product, artifactNameWithPlatformArch);
+                            const artifactNameWithPlatformArch = `${productName}-${platform}-${arch}`;
+                            if (artifactSafename.indexOf(result.arch) >= 0) {
+                                artifactSafename = artifactSafename.replace(result.arch, arch);
+                            } else if (artifactSafename.indexOf(artifactNameWithPlatformArch) < 0) {
+                                artifactSafename = artifactSafename.replace(productName, artifactNameWithPlatformArch);
                             }
                             if (artifactName !== artifactSafename) {
                                 fs.renameSync(artifact, path.join(path.dirname(artifact), artifactSafename));
