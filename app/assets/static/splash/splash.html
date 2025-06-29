@@ -17,8 +17,8 @@ body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
 <body class="splash">
 <p class="message m-0">Please wait&hellip;</p>
 <script>
-let msg = document.querySelector('.message');
-window.electronAPI.listen('splash-message', message => {
+const msg = document.querySelector('.message');
+electronAPI.listen('splash-message', message => {
     if (msg) {
         message += '&hellip;';
         msg.innerHTML = message;

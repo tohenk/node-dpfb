@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2019-2023 Toha <tohenk@yahoo.com>
+ * Copyright (c) 2019-2025 Toha <tohenk@yahoo.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -43,7 +43,7 @@ class MainApp
     logs = []
     ready = false
 
-    initialize() {
+    initializeConfig() {
         let filename;
         // read configuration from command line values
         if (process.env.APP_CONFIG && fs.existsSync(process.env.APP_CONFIG)) {
@@ -53,52 +53,53 @@ class MainApp
         } else if (fs.existsSync(path.join(__dirname, 'config.json'))) {
             filename = path.join(__dirname, 'config.json');
         }
-        this.initializeConfig(filename);
-        this.initializeIpc();
-    }
-
-    initializeConfig(filename) {
         if (fs.existsSync(filename)) {
             console.log('Reading configuration %s', filename);
             this.config = JSON.parse(fs.readFileSync(filename));
         }
-        Object.assign(this.config, this.getConfigHandlers());
-        if (!this.config.rootdir) {
-            this.config.rootdir = __dirname;
-        }
-        if (!this.config.workdir) {
-            this.config.workdir = process.cwd();
-        }
-        this.config.staticdir = path.join(this.config.rootdir, 'assets', 'static');
-        this.config.icondir = path.join(this.config.rootdir, 'assets', 'icons');
-        // check for default configuration
-        if (typeof this.config.debug === 'undefined') {
-            this.config.debug = false;
-        }
-        if (Cmd.has('port')) {
-            this.config.port = parseInt(Cmd.get('port'));
+    }
+
+    applyDefaultConfig() {
+        for (const [k, v] of Object.entries(this.getDefaults())) {
+            if (this.config[k] === undefined) {
+                let value = v;
+                if (typeof value === 'function') {
+                    value = value();
+                }
+                if (value !== undefined && value !== null) {
+                    this.config[k] = value;
+                }
+            }
         }
     }
 
-    initializeIpc() {
+    handleCoreIpc() {
         ipcMain.handle('state', (event, data) => {
             return {ready: this.ready};
         });
     }
 
-    getConfigHandlers() {
+    getDefaults() {
         return {
-            getTranslatedPath: path => {
-                if (app.isPackaged && path.match(/app\.asar/)) {
-                    const translated = path.replace(/app\.asar/, 'app.asar.unpacked');
-                    const ofs = require('original-fs');
-                    if (ofs.existsSync(translated)) {
-                        path = translated;
-                    }
-                }
-                return path;
-            }
+            rootdir: __dirname,
+            workdir: process.cwd(),
+            staticdir: () => this.getAssetDir('static'),
+            icondir: () => this.getAssetDir('icons'),
+            port: Cmd.get('port'),
+            debug: false,
         }
+    }
+
+    getAssetDir(...dirs) {
+        return path.join(this.config.rootdir, 'assets', ...dirs);
+    }
+
+    getStatic(...files) {
+        return path.join(this.config.staticdir, ...files);
+    }
+
+    getIcon(...files) {
+        return path.join(this.config.icondir, ...files);
     }
 
     getTrayMenu() {
@@ -131,7 +132,7 @@ class MainApp
     getCommonPreferences() {
         return {
             webPreferences: {
-                preload: path.join(this.config.staticdir, 'preload.js'),
+                preload: this.getStatic('preload.js'),
             }
         };
     }
@@ -143,11 +144,17 @@ class MainApp
         if (!this.win.isVisible()) {
             this.win.show();
         }
-        this.win.loadFile(path.join(this.config.staticdir, 'error', 'error.html'));
+        this.win.loadFile(this.getStatic('error', 'error.html'));
         this.win.webContents.on('dom-ready', () => {
             const util = require('util');
             this.win.webContents.send('error-message', util.inspect(err));
         });
+    }
+
+    notify(event, data) {
+        for (const browser of BrowserWindow.getAllWindows()) {
+            browser.webContents.send(event, data);
+        }
     }
 
     createWin(options, fileOrUrl = null) {
@@ -165,7 +172,7 @@ class MainApp
     createWindow() {
         return new Promise((resolve, reject) => {
             this.win = this.createWin({show: false, width: 600, height: 400, center: true},
-                path.join(this.config.staticdir, 'log', 'log.html'));
+                this.getStatic('log', 'log.html'));
             this.win.on('close', e => {
                 if (!this.quit) {
                     e.preventDefault();
@@ -174,7 +181,7 @@ class MainApp
             });
             const baseOptions = {parent: this.win, modal: true, minimizable: false, maximizable: false};
             this.splash = this.createWin(Object.assign({width: 500, height: 300, frame: false}, baseOptions),
-                path.join(this.config.staticdir, 'splash', 'splash.html'));
+                this.getStatic('splash', 'splash.html'));
             this.splash.webContents.on('dom-ready', () => resolve());
         });
     }
@@ -190,8 +197,7 @@ class MainApp
 
     createTrayIcon() {
         return new Promise((resolve, reject) => {
-            const iconName = 'tray-icon.png';
-            this.trayIcon = new Tray(path.join(this.config.icondir, iconName));
+            this.trayIcon = new Tray(this.getIcon('tray-icon.png'));
             this.trayIcon.setToolTip(app.getName());
             this.trayIcon.setContextMenu(this.getTrayMenu());
             resolve();
@@ -210,9 +216,7 @@ class MainApp
         .then(() => {
             console.log(`App ${app.getName()} is ready...`);
             this.ready = true;
-            BrowserWindow.getAllWindows().forEach(win => {
-                win.webContents.send('ready', {ready: true});
-            });
+            this.notify('ready', {ready: true});
         })
         .catch(err => {
             this.showError(err);
@@ -222,7 +226,11 @@ class MainApp
     handleEvents() {
         app.whenReady().then(() => {
             if (!app.requestSingleInstanceLock()) {
-                dialog.showMessageBoxSync({title: 'Error', message: `${app.getName()} already running!`, type: 'error'});
+                dialog.showMessageBoxSync({
+                    title: 'Error',
+                    message: `${app.getName()} already running!`,
+                    type: 'error',
+                });
                 app.quit();
             } else {
                 this.startApp();
@@ -247,7 +255,9 @@ class MainApp
     }
     
     run() {
-        this.initialize();
+        this.initializeConfig();
+        this.applyDefaultConfig();
+        this.handleCoreIpc();
         this.handleEvents();
     }
 }

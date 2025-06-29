@@ -8,8 +8,8 @@
 <body>
 <pre class="message">Please wait&hellip;</pre>
 <script>
-let msg = document.querySelector('.message');
-window.electronAPI.listen('error-message', message => {
+const msg = document.querySelector('.message');
+electronAPI.listen('error-message', message => {
     if (msg) {
         msg.innerHTML = message;
     }

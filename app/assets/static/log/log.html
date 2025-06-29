@@ -22,19 +22,18 @@ if (log) {
     const focusTo = () => {
         const delta = log.clientHeight - html.clientHeight;
         if (delta > 0) {
-            console.log(delta);
             html.scrollTop = delta;
         }
     }
     const getLogs = () => {
-        window.electronAPI.invoke('get-logs', data => {
+        electronAPI.invoke('get-logs', data => {
             if (data.logs) {
                 log.innerHTML = data.logs.join('\n');
                 focusTo();
             }
         });
     }
-    window.electronAPI.listen('log', message => {
+    electronAPI.listen('log', message => {
         if (log.innerHTML.length) {
             log.innerHTML += '<br>';
         }
@@ -42,13 +41,11 @@ if (log) {
         focusTo();
     });
     window.addEventListener('DOMContentLoaded', e => {
-        window.electronAPI.invoke('state', data => {
+        electronAPI.invoke('state', data => {
             if (data.ready) {
                 getLogs();
             } else {
-                window.electronAPI.listen('ready', data => {
-                    getLogs();
-                });
+                electronAPI.listen('ready', data => getLogs());
             }
         });
     });
